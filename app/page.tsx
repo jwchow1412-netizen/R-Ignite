@@ -34,7 +34,7 @@ export default function Home() {
             bridges academia and industry, fostering innovation and preparing participants for
             future challenges in the actuarial field.
           </p>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <Link href="/register" className="btn-primary">
               Register Interest (Coming Soon)
             </Link>
@@ -43,18 +43,20 @@ export default function Home() {
             </Link>
             <span className="badge-soft">Focus track: Cybersecurity Risk (subject to change)</span>
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="glass-panel p-4">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="glass-panel p-4 sm:p-5">
               <p className="text-xs uppercase tracking-[0.14em] text-[rgba(248,244,246,0.65)]">Organizer</p>
               <p className="text-lg font-semibold text-white">Malaysian Actuarial Student Association (MASA)</p>
             </div>
-            <div className="glass-panel p-4">
+            <div className="glass-panel p-4 sm:p-5">
               <p className="text-xs uppercase tracking-[0.14em] text-[rgba(248,244,246,0.65)]">Duration</p>
               <p className="text-lg font-semibold text-white">Two-month event</p>
             </div>
-            <div className="glass-panel p-4">
+            <div className="glass-panel p-4 sm:p-5">
               <p className="text-xs uppercase tracking-[0.14em] text-[rgba(248,244,246,0.65)]">Contact</p>
-              <p className="text-lg font-semibold text-white">hackathon@masassociation.org</p>
+              <p className="text-lg font-semibold text-white break-words">
+                hackathon@masassociation.org
+              </p>
             </div>
           </div>
         </div>
@@ -175,7 +177,7 @@ export default function Home() {
 
           <div className="space-y-4 rounded-xl border border-border bg-[rgba(255,255,255,0.02)] p-6">
             <h3 className="text-2xl font-bold text-white">Contact</h3>
-            <ul className="space-y-3 text-[rgba(248,244,246,0.9)]">
+            <ul className="space-y-3 text-[rgba(248,244,246,0.9)] break-words">
               <li>
                 <span className="font-semibold text-white">Email:</span>{" "}
                 <Link href="mailto:hackathon@masassociation.org" className="underline">
