@@ -102,8 +102,91 @@ export const highlightMetrics = [
 ];
 
 export const organisingRoles = [
-  { role: "Chairperson", name: "Name Coming Soon" },
-  { role: "Co-Chairperson", name: "Name Coming Soon" },
-  { role: "Corporate Relations", name: "Name Coming Soon" },
-  { role: "Marketing", name: "Name Coming Soon" },
+  {
+    role: "Chairperson",
+    name: "Lew Xuan Yee",
+    linkedin:
+      "https://www.linkedin.com/in/lew-xuan-yee-15a222368?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    image: "/team/lew-xuan-yee.jpg",
+    category: "Chairperson",
+  },
+  {
+    role: "Co-Chairperson",
+    name: "Tan Se Kee",
+    linkedin: "https://www.linkedin.com/in/se-kee-tan-ba11742a7/",
+    image: "/team/tan-se-kee.jpg",
+    category: "Chairperson",
+  },
+  {
+    role: "H.O. Operation",
+    name: "Vong Jun Yi",
+    linkedin: "https://www.linkedin.com/in/vongjunyi/",
+    image: "/team/vong-jun-yi.jpg",
+    category: "Operation",
+  },
+  {
+    role: "Operation Officer",
+    name: "Justin Tai Jing Yan",
+    linkedin: "https://www.linkedin.com/in/justintai-",
+    image: "/team/justin-tai-jing-yan.jpg",
+    category: "Operation",
+  },
+  {
+    role: "Operation Officer",
+    name: "Lai Hui Ni",
+    linkedin: "https://www.linkedin.com/in/lai-hui-ni-0b3449362",
+    image: "/team/lai-hui-ni.jpg",
+    category: "Operation",
+  },
+  {
+    role: "H.O. Marcom",
+    name: "Chow Jian Wei",
+    linkedin:
+      "https://www.linkedin.com/in/jian-wei-chow-897b842b7?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    image: "/team/chow-jian-wei.jpg",
+    category: "Marketing",
+  },
+  {
+    role: "Marcom Officer",
+    name: "Justin Fang Qi Xuan",
+    image: "/team/justin-fang-qi-xuan.jpg",
+    category: "Marketing",
+  },
+  {
+    role: "Marcom Officer",
+    name: "Low Zi Yu",
+    image: "/team/low-zi-yu.jpg",
+    category: "Marketing",
+  },
+  {
+    role: "H.O. Corporate Relations",
+    name: "Liew Emmie",
+    linkedin:
+      "https://www.linkedin.com/in/emmie-liew-4a97302b1?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    image: "/team/liew-emmie.jpg",
+    category: "Corporate Relations",
+  },
+  {
+    role: "Corporate Relations Officer",
+    name: "Moh Xiang Hng",
+    linkedin:
+      "https://www.linkedin.com/in/xiang-hng-moh-904a6033b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    image: "/team/moh-xiang-hng.jpg",
+    category: "Corporate Relations",
+  },
+  {
+    role: "Corporate Relations Officer",
+    name: "Thusshenty Darumaraja",
+    linkedin:
+      "https://www.linkedin.com/in/thusshenty-darumaraja?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    image: "/team/thusshenty-darumaraja.jpg",
+    category: "Corporate Relations",
+  },
+  {
+    role: "Corporate Relations Officer",
+    name: "Wong Xuen Wen",
+    linkedin:
+      "https://www.linkedin.com/in/xuen-wen-wong-b77b95272?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    category: "Corporate Relations",
+  },
 ];
