@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import Timeline from "@/components/Timeline";
 import { executionPhases, timelineItems, whyJoin } from "@/lib/data";
@@ -9,7 +10,19 @@ export default function Home() {
     <div className="relative overflow-hidden">
       <section className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 md:flex-row md:items-center md:gap-12 md:px-6 md:py-20">
         <div className="flex-1 space-y-6">
-          <span className="badge-soft">Malaysian Actuarial Student Association (MASA)</span>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.12)]">
+              <Image
+                src="/logo.png"
+                alt="R-Ignite logo"
+                fill
+                sizes="56px"
+                className="object-cover"
+                priority
+              />
+            </div>
+            <span className="badge-soft">Malaysian Actuarial Student Association (MASA)</span>
+          </div>
           <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl">
             MASA Hackathon 2026: R-Ignite
           </h1>

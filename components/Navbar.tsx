@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -61,9 +62,16 @@ export default function Navbar() {
           onClick={() => setMobileOpen(false)}
           aria-label="MASA Hackathon 2026: R-Ignite home"
         >
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(212,100,118,0.18)] border border-[rgba(212,100,118,0.35)] text-white font-bold">
-            R
-          </span>
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.18)]">
+            <Image
+              src="/logo.png"
+              alt="R-Ignite logo"
+              fill
+              sizes="40px"
+              className="object-cover"
+              priority
+            />
+          </div>
           <div className="leading-tight">
             <div>MASA Hackathon 2026</div>
             <div className="text-xs text-[rgba(248,244,246,0.7)]">R-Ignite</div>
