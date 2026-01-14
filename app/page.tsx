@@ -8,7 +8,7 @@ const shortTimeline = timelineItems.slice(0, 3);
 export default function Home() {
   return (
     <div className="relative overflow-hidden">
-      <section className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 md:flex-row md:items-center md:gap-12 md:px-6 md:py-20">
+      <section className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pt-16 pb-14 md:flex-row md:items-center md:gap-12 md:px-6 md:pt-20 md:pb-20">
         <div className="flex-1 space-y-6">
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.12)]">
@@ -26,7 +26,7 @@ export default function Home() {
           <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl">
             MASA Hackathon 2026: R-Ignite
           </h1>
-          <p className="max-w-3xl text-lg text-[rgba(248,244,246,0.85)]">
+          <p className="max-w-3xl text-lg leading-relaxed text-[rgba(248,244,246,0.85)]">
             MASA is back with its annual flagship competition in 2026 themed “MASA Hackathon
             2026: R-Ignite”. This two-month event offers Actuarial Science students an opportunity
             to apply theoretical knowledge to real-world problems, gain hands-on experience,
@@ -35,10 +35,10 @@ export default function Home() {
             future challenges in the actuarial field.
           </p>
           <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-            <Link href="/register" className="btn-primary">
+            <Link href="/register" className="btn-primary w-full sm:w-auto justify-center">
               Register Interest (Coming Soon)
             </Link>
-            <Link href="/downloads/handbook.pdf" className="btn-secondary">
+            <Link href="/downloads/handbook.pdf" className="btn-secondary w-full sm:w-auto justify-center">
               Download Handbook
             </Link>
             <span className="badge-soft">Focus track: Cybersecurity Risk (subject to change)</span>
@@ -178,21 +178,21 @@ export default function Home() {
           <div className="space-y-4 rounded-xl border border-border bg-[rgba(255,255,255,0.02)] p-6">
             <h3 className="text-2xl font-bold text-white">Contact</h3>
             <ul className="space-y-3 text-[rgba(248,244,246,0.9)] break-words">
-              <li>
-                <span className="font-semibold text-white">Email:</span>{" "}
-                <Link href="mailto:hackathon@masassociation.org" className="underline">
+              <li className="space-y-1 break-words">
+                <span className="block font-semibold text-white">Email:</span>
+                <Link href="mailto:hackathon@masassociation.org" className="underline break-all">
                   hackathon@masassociation.org
                 </Link>
               </li>
-              <li>
-                <span className="font-semibold text-white">Website:</span>{" "}
-                <Link href="https://www.masassociation.org/" className="underline">
+              <li className="space-y-1 break-words">
+                <span className="block font-semibold text-white">Website:</span>
+                <Link href="https://www.masassociation.org/" className="underline break-all">
                   https://www.masassociation.org/
                 </Link>
               </li>
-              <li>
-                <span className="font-semibold text-white">LinkedIn:</span>{" "}
-                <Link href="https://www.linkedin.com/company/masassociation/" className="underline">
+              <li className="space-y-1 break-words">
+                <span className="block font-semibold text-white">LinkedIn:</span>
+                <Link href="https://www.linkedin.com/company/masassociation/" className="underline break-all">
                   https://www.linkedin.com/company/masassociation/
                 </Link>
               </li>
