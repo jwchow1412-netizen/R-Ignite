@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MASA Hackathon 2026: R-Ignite — Website
 
-## Getting Started
+Next.js 14 App Router + TypeScript + Tailwind CSS. Built for Vercel deployment with no database or CMS dependencies. Content follows the provided proposal; any missing items are marked “Coming Soon”.
 
-First, run the development server:
+## Local development
 
+1) Install dependencies
+```bash
+npm install
+```
+2) Run the dev server
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+Visit http://localhost:3000 to view the site. Edit files under `app/` and `components/`; changes hot-reload.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project structure
+- `app/` — App Router pages (Home, About, Track, Timeline, Resources, People subpages, FAQ, Register) and layout.
+- `components/` — Navbar, Footer, Timeline, PersonCard, ResourceDownloadCard, and supporting UI pieces.
+- `lib/data.ts` — Structured content for timelines, schedules, and bullet lists.
+- `public/downloads/` — Placeholder PDFs (`handbook.pdf`, `problem-statement.pdf`, `rubric.pdf`, `terms-and-conditions.pdf`). Replace files here to update downloads without changing URLs.
+- `public/team/` — Placeholder image (`placeholder.svg`) for team profiles. Add real photos with matching filenames and update components if needed.
+- `app/globals.css` — Theme styles (dark maroon gradient) and shared utility classes.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Updating content
+- Replace placeholder PDFs in `public/downloads/` with final documents (keep filenames stable for live links).
+- Swap profile photos by adding images to `public/team/` and updating `PersonCard` props if you introduce unique filenames.
+- People pages (Judges, Mentors, Speakers, Organising Team) and Register CTA are marked Coming Soon until details are provided.
+- Focus track currently displays “Cybersecurity Risk (subject to change)” per the proposal.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Useful scripts
+- `npm run dev` — start local dev server.
+- `npm run lint` — run Next.js lint checks.
+- `npm run build` — production build.
+- `npm start` — run the production build locally.
 
-## Learn More
+## Deploying to Vercel
+1) Push this repo to your Git provider (GitHub/GitLab/Bitbucket).
+2) In Vercel, **Import Project** and select the repo.
+3) Framework preset: **Next.js**. No env vars or database required.
+4) Deploy. Vercel will build using `npm run build`.
+5) (Optional) Enable automatic deployments from your main branch for updates.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Custom domains on Vercel
+1) In the Vercel project, go to **Settings → Domains**.
+2) Add your domain (e.g., `ignite.masassociation.org`).
+3) Follow the DNS instructions shown (CNAME or A/AAAA records).
+4) Wait for propagation; Vercel will provision SSL automatically.
