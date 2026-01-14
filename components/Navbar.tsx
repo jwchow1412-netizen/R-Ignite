@@ -64,7 +64,7 @@ export default function Navbar() {
         >
           <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.18)]">
             <Image
-              src="/logo.png"
+              src="/logo.svg"
               alt="R-Ignite logo"
               fill
               sizes="40px"

@@ -13,7 +13,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.12)]">
               <Image
-                src="/logo.png"
+                src="/logo.svg"
                 alt="R-Ignite logo"
                 fill
                 sizes="56px"

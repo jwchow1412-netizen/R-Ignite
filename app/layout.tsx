@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   description:
     "Official site for MASA Hackathon 2026: R-Ignite, a two-month actuarial innovation challenge bridging academia and industry.",
   icons: {
-    icon: "/logo.png",
+    icon: "/logo.svg",
   },
 };
 

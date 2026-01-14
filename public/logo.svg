@@ -1,0 +1,54 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title>R-Ignite Logo</title>
+  <desc>Gradient flame and R-Ignite wordmark</desc>
+  <defs>
+    <radialGradient id="bg" cx="25%" cy="20%" r="80%">
+      <stop offset="0%" stop-color="#9c1f45" stop-opacity="0.7" />
+      <stop offset="45%" stop-color="#3b0f24" stop-opacity="0.65" />
+      <stop offset="100%" stop-color="#0d050d" />
+    </radialGradient>
+    <linearGradient id="pink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6584" />
+      <stop offset="50%" stop-color="#f04d7d" />
+      <stop offset="100%" stop-color="#c5245d" />
+    </linearGradient>
+    <linearGradient id="flame" x1="40%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" stop-color="#ffb6c9" />
+      <stop offset="35%" stop-color="#ff6a7d" />
+      <stop offset="100%" stop-color="#b3174d" />
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="500" height="500" rx="32" fill="url(#bg)" />
+
+  <g filter="url(#glow)">
+    <path d="M250 72 L270 214 L250 196 L230 214 Z" fill="#9c1f45" fill-opacity="0.7" />
+  </g>
+
+  <g filter="url(#glow)">
+    <path d="M195 152 C195 126 214 100 234 96 C224 118 228 140 252 170 C264 186 268 202 262 214 C248 240 212 234 197 210 C190 198 195 178 195 152Z" fill="url(#flame)" />
+    <path d="M225 138 C223 118 240 98 260 92 C242 110 248 136 264 158 C272 170 276 182 272 194 C262 222 228 212 225 188 C223 176 226 162 225 138Z" fill="#b3174d" fill-opacity="0.5" />
+  </g>
+
+  <g transform="translate(135 180)" filter="url(#glow)">
+    <path d="M0 20 C0 9 9 0 20 0 H80 C115 0 140 25 140 60 C140 95 115 120 80 120 H20 C9 120 0 111 0 100 Z" fill="url(#pink)" />
+    <rect x="0" y="20" width="80" height="100" rx="18" fill="url(#pink)" />
+  </g>
+
+  <g transform="translate(250 180)" filter="url(#glow)">
+    <path d="M0 0 H70 C100 0 122 22 122 52 C122 78 105 98 80 102 L122 138 C126 142 126 150 120 154 C117 156 114 156 111 156 C107 155 104 153 102 151 L48 106 C22 104 0 82 0 55 Z" fill="url(#pink)" />
+  </g>
+
+  <path d="M196 292 L304 292" stroke="url(#pink)" stroke-width="8" stroke-linecap="round" />
+
+  <text x="95" y="348" fill="#ffffff" font-family="Arial, 'Helvetica Neue', sans-serif" font-weight="800" font-size="80" letter-spacing="2">
+    -IGNITE
+  </text>
+</svg>
