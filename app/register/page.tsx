@@ -19,14 +19,14 @@ export default function RegisterPage() {
       </div>
 
       <div className="mt-8 grid gap-4 md:w-2/3">
-        <Link
-          href="#"
+        <button
+          type="button"
+          disabled
           className="btn-primary justify-center cursor-not-allowed opacity-80"
           aria-disabled
-          onClick={(event) => event.preventDefault()}
         >
           Register Interest (Coming Soon)
-        </Link>
+        </button>
         <div className="rounded-lg border border-border bg-[rgba(255,255,255,0.02)] p-4 text-sm text-[rgba(248,244,246,0.85)]">
           <p className="font-semibold text-white">Key dates</p>
           <ul className="mt-2 space-y-2">

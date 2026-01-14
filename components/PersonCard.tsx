@@ -1,3 +1,4 @@
+// This component stays a Server Component; avoid client handlers for static generation.
 import Image from "next/image";
 import Link from "next/link";
 
@@ -33,18 +34,20 @@ export default function PersonCard({ name, role, status, linkedin }: PersonCardP
         ) : null}
       </div>
       <div className="flex gap-2">
-        <Link
-          href={hasLinkedIn ? (linkedin as string) : "#"}
-          className={`btn-secondary w-full justify-center ${!hasLinkedIn ? "cursor-not-allowed opacity-60" : ""}`}
-          aria-disabled={!hasLinkedIn}
-          onClick={(event) => {
-            if (!hasLinkedIn) {
-              event.preventDefault();
-            }
-          }}
-        >
-          LinkedIn
-        </Link>
+        {hasLinkedIn ? (
+          <Link href={linkedin as string} className="btn-secondary w-full justify-center">
+            LinkedIn
+          </Link>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="btn-secondary w-full justify-center cursor-not-allowed opacity-60"
+            aria-disabled
+          >
+            LinkedIn (Coming Soon)
+          </button>
+        )}
       </div>
     </div>
   );
