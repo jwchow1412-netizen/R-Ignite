@@ -156,6 +156,48 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-24 md:px-6">
+        <div className="glass-panel grid gap-6 p-6 md:grid-cols-2 md:items-center">
+          <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[rgba(255,255,255,0.02)] p-6">
+            <div className="relative h-28 w-28 overflow-hidden rounded-2xl border border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.1)]">
+              <Image
+                src="/logo.svg"
+                alt="R-Ignite logo"
+                fill
+                sizes="112px"
+                className="object-contain"
+                priority
+              />
+            </div>
+            <p className="text-lg font-semibold text-white">MASA Hackathon 2026: R-Ignite</p>
+          </div>
+
+          <div className="space-y-4 rounded-xl border border-border bg-[rgba(255,255,255,0.02)] p-6">
+            <h3 className="text-2xl font-bold text-white">Contact</h3>
+            <ul className="space-y-3 text-[rgba(248,244,246,0.9)]">
+              <li>
+                <span className="font-semibold text-white">Email:</span>{" "}
+                <Link href="mailto:hackathon@masassociation.org" className="underline">
+                  hackathon@masassociation.org
+                </Link>
+              </li>
+              <li>
+                <span className="font-semibold text-white">Website:</span>{" "}
+                <Link href="https://www.masassociation.org/" className="underline">
+                  https://www.masassociation.org/
+                </Link>
+              </li>
+              <li>
+                <span className="font-semibold text-white">LinkedIn:</span>{" "}
+                <Link href="https://www.linkedin.com/company/masassociation/" className="underline">
+                  https://www.linkedin.com/company/masassociation/
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
