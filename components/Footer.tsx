@@ -2,7 +2,15 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-[#0c060c]">
+    <footer
+      className="border-t border-border"
+      style={{
+        backgroundImage: "url('/background.png')",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "top center",
+      }}
+    >
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-6">
         <div>
           <p className="text-sm font-semibold text-white">MASA Hackathon 2026: R-Ignite</p>

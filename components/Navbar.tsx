@@ -54,7 +54,15 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-[rgba(12,6,12,0.8)] backdrop-blur-md">
+    <header
+      className="sticky top-0 z-50 border-b border-border/60 backdrop-blur-md"
+      style={{
+        backgroundImage: "url('/background.png')",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "top center",
+      }}
+    >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6">
         <Link
           href="/"
