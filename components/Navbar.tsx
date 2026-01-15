@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const mainLinks = [
   { name: "Home", href: "/" },
@@ -41,11 +42,10 @@ export default function Navbar() {
       <Link
         key={link.name}
         href={link.href}
-        className={`px-3 py-2 text-sm font-semibold transition-colors rounded-lg ${
-          active
-            ? "text-white bg-[rgba(212,100,118,0.15)] border border-[rgba(212,100,118,0.35)]"
-            : "text-[rgba(248,244,246,0.82)] hover:text-white hover:bg-[rgba(255,255,255,0.06)]"
-        }`}
+        className={`px-3 py-2 text-sm font-semibold transition-colors rounded-lg ${active
+          ? "text-white bg-[rgba(212,100,118,0.15)] border border-[rgba(212,100,118,0.35)]"
+          : "text-[rgba(248,244,246,0.82)] hover:text-white hover:bg-[rgba(255,255,255,0.06)]"
+          }`}
         onClick={() => setMobileOpen(false)}
       >
         {link.name}
@@ -92,11 +92,10 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setPeopleOpen((prev) => !prev)}
-              className={`px-3 py-2 text-sm font-semibold rounded-lg inline-flex items-center gap-1 transition-colors ${
-                pathname.startsWith("/people")
-                  ? "text-white bg-[rgba(212,100,118,0.15)] border border-[rgba(212,100,118,0.35)]"
-                  : "text-[rgba(248,244,246,0.82)] hover:text-white hover:bg-[rgba(255,255,255,0.06)]"
-              }`}
+              className={`px-3 py-2 text-sm font-semibold rounded-lg inline-flex items-center gap-1 transition-colors ${pathname.startsWith("/people")
+                ? "text-white bg-[rgba(212,100,118,0.15)] border border-[rgba(212,100,118,0.35)]"
+                : "text-[rgba(248,244,246,0.82)] hover:text-white hover:bg-[rgba(255,255,255,0.06)]"
+                }`}
               aria-expanded={peopleOpen}
             >
               People
@@ -121,9 +120,11 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          <Link href="/register" className="btn-primary">
-            Register Interest
-          </Link>
+          <Button asChild>
+            <Link href="/register">
+              Register Interest
+            </Link>
+          </Button>
         </nav>
 
         <button
@@ -167,13 +168,15 @@ export default function Navbar() {
                 ))}
               </div>
             </details>
-            <Link
-              href="/register"
-              className="btn-primary justify-center text-center"
+            <Button
+              asChild
+              className="w-full justify-center"
               onClick={() => setMobileOpen(false)}
             >
-              Register Interest
-            </Link>
+              <Link href="/register">
+                Register Interest
+              </Link>
+            </Button>
           </div>
         </div>
       )}

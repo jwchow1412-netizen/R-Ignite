@@ -1,6 +1,6 @@
-// This component stays a Server Component; avoid client handlers for static generation.
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 type PersonCardProps = {
   name: string;
@@ -16,9 +16,9 @@ export default function PersonCard({ name, role, status, image, linkedin }: Pers
   const imageAlt = image ? `${name} headshot` : `${name} placeholder`;
 
   return (
-    <div className="glass-panel flex h-full flex-col items-center gap-4 p-4 text-center">
+    <div className="glass-panel flex h-full flex-col items-center gap-4 p-4 text-center transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_-10px_rgba(212,100,118,0.3)] hover:border-[rgba(212,100,118,0.3)]">
       <div className="flex justify-center">
-        <div className="relative h-40 w-40 overflow-hidden rounded-full border-2 border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.08)] shadow-[0_0_0_10px_rgba(212,100,118,0.06)]">
+        <div className="relative h-40 w-40 overflow-hidden rounded-full border-2 border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.08)] shadow-[0_0_0_10px_rgba(212,100,118,0.06)] transition-colors duration-300 group-hover:border-[rgba(212,100,118,0.6)]">
           <Image
             src={imageSrc}
             alt={imageAlt}
@@ -39,18 +39,21 @@ export default function PersonCard({ name, role, status, image, linkedin }: Pers
       </div>
       <div className="flex w-full gap-2">
         {hasLinkedIn ? (
-          <Link href={linkedin as string} className="btn-linkedin w-full justify-center">
-            LinkedIn
-          </Link>
+          <Button asChild variant="linkedin" className="w-full justify-center">
+            <Link href={linkedin as string}>
+              LinkedIn
+            </Link>
+          </Button>
         ) : (
-          <button
+          <Button
             type="button"
             disabled
-            className="btn-secondary w-full justify-center cursor-not-allowed opacity-60"
+            variant="secondary"
+            className="w-full justify-center cursor-not-allowed opacity-60"
             aria-disabled
           >
             LinkedIn (Coming Soon)
-          </button>
+          </Button>
         )}
       </div>
     </div>
