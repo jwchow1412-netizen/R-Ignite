@@ -25,7 +25,7 @@ export default function TimelinePage() {
             <h2 className="text-2xl font-semibold text-white">Workshop &amp; Briefing Itinerary</h2>
             <span className="badge-soft">25th April 2026</span>
           </div>
-          <details className="mt-4 rounded-lg border border-border/70 bg-[rgba(255,255,255,0.02)] p-4" open>
+          <details className="mt-4 rounded-lg border border-border/70 bg-[rgba(255,255,255,0.02)] p-4">
             <summary className="cursor-pointer text-sm font-semibold text-white">View schedule</summary>
             <ul className="mt-3 space-y-2 text-sm text-[rgba(248,244,246,0.85)]">
               {workshopSchedule.map((slot) => (
@@ -48,7 +48,7 @@ export default function TimelinePage() {
             scenario analyses, strategies and data visualisations. Each team: 15 minutes presentation + 10
             minutes Q&amp;A.
           </p>
-          <details className="mt-4 rounded-lg border border-border/70 bg-[rgba(255,255,255,0.02)] p-4" open>
+          <details className="mt-4 rounded-lg border border-border/70 bg-[rgba(255,255,255,0.02)] p-4">
             <summary className="cursor-pointer text-sm font-semibold text-white">View schedule</summary>
             <ul className="mt-3 space-y-2 text-sm text-[rgba(248,244,246,0.85)]">
               {grandFinalSchedule.map((slot) => (
