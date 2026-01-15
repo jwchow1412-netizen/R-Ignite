@@ -47,10 +47,6 @@ export default function FAQPage() {
           FAQ
         </p>
         <h1 className="text-4xl font-bold text-white">Answers at a glance</h1>
-        <p className="max-w-4xl text-lg text-[rgba(248,244,246,0.85)]">
-          All details below reflect the current proposal. Items marked Coming Soon will be updated once
-          confirmed.
-        </p>
       </div>
 
       <div className="mt-10 space-y-4">
@@ -58,7 +54,6 @@ export default function FAQPage() {
           <details
             key={item.question}
             className="group rounded-xl border border-border bg-[rgba(255,255,255,0.02)] p-4"
-            open
           >
             <summary className="flex cursor-pointer items-center justify-between text-lg font-semibold text-white">
               {item.question}
