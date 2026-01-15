@@ -66,7 +66,6 @@ export default function RegisterPage() {
   ]
 
   const nextStep = async () => {
-    // @ts-expect-error - dynamic fields key check
     const fields = steps[step].fields
     const output = await trigger(fields)
 
