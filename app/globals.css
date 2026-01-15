@@ -127,6 +127,26 @@ body {
     transform: translateY(-1px);
     box-shadow: 0 18px 36px rgba(59, 160, 255, 0.35);
   }
+
+  .btn-resource-download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.3rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f57c00, #f89924);
+    color: #fff;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 16px 32px rgba(248, 153, 36, 0.25);
+    transition: transform 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
+  }
+
+  .btn-resource-download:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 36px rgba(248, 153, 36, 0.35);
+  }
 }
 
 ::selection {

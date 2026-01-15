@@ -28,7 +28,7 @@ export default function ResourceDownloadCard({
       </div>
       <Link
         href={href}
-        className={`btn-secondary w-full justify-center ${comingSoon ? "opacity-70" : ""}`}
+        className={`btn-resource-download w-full justify-center ${comingSoon ? "opacity-70" : ""}`}
         download
       >
         Download
