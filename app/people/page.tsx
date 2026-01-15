@@ -20,8 +20,7 @@ export default function PeoplePage() {
         </p>
         <h1 className="text-4xl font-bold text-white">Guides, mentors, and organisers</h1>
         <p className="max-w-4xl text-lg text-[rgba(248,244,246,0.85)]">
-          Judges, mentors, and speakers will be announced soon. The organising team roles are listed with
-          names to be added later.
+          Judges, mentors, and speakers will be announced soon.
         </p>
       </div>
 

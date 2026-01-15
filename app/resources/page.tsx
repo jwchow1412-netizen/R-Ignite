@@ -38,10 +38,6 @@ export default function ResourcesPage() {
           Resources
         </p>
         <h1 className="text-4xl font-bold text-white">Download centre</h1>
-        <p className="max-w-4xl text-lg text-[rgba(248,244,246,0.85)]">
-          All resources are hosted under stable URLs so files can be replaced later without changing links.
-          If a document is not yet final, the download is marked Coming Soon and uses a placeholder PDF.
-        </p>
       </div>
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">

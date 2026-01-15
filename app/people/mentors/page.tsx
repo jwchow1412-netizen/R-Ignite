@@ -18,9 +18,7 @@ export default function MentorsPage() {
           People
         </p>
         <h1 className="text-4xl font-bold text-white">Mentors</h1>
-        <p className="text-lg text-[rgba(248,244,246,0.85)]">
-          Mentors are not confirmed yet. Placeholder cards will be replaced once announcements are made.
-        </p>
+        <p className="text-lg text-[rgba(248,244,246,0.85)]">Profiles will be added once announced.</p>
       </div>
 
       <div className="mt-10 grid gap-5 md:grid-cols-3">

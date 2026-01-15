@@ -13,8 +13,7 @@ export default function RegisterPage() {
         </p>
         <h1 className="text-4xl font-bold text-white">Register Interest</h1>
         <p className="max-w-4xl text-lg text-[rgba(248,244,246,0.85)]">
-          Registration links will be released soon. The registration period is 3rd – 23rd April 2026. Use the
-          button below as a placeholder to signal interest and check back for updates.
+          Registration links will be released soon. The registration period is 3rd – 23rd April 2026.
         </p>
       </div>
 

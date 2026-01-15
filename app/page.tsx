@@ -1,11 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import Timeline from "@/components/Timeline";
+import HeroIntroToggle from "@/components/HeroIntroToggle";
 import { executionPhases, timelineItems, whyJoin } from "@/lib/data";
 
 const shortTimeline = timelineItems.slice(0, 3);
 
 export default function Home() {
+  const introFull =
+    "MASA is back with its annual flagship competition in 2026 themed “MASA Hackathon 2026: R-Ignite”. This two-month event offers Actuarial Science students an opportunity to apply theoretical knowledge to real-world problems, gain hands-on experience, enhance analytical skills, and network with industry professionals. The hackathon bridges academia and industry, fostering innovation and preparing participants for future challenges in the actuarial field.";
+  const introShort =
+    "MASA is back with its annual flagship competition in 2026 themed “MASA Hackathon 2026: R-Ignite”. This two-month event offers Actuarial Science students an opportunity to apply theoretical knowledge to real-world problems and gain hands-on experience.";
+
   return (
     <div className="relative overflow-hidden">
       <section className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pt-16 pb-14 md:flex-row md:items-center md:gap-12 md:px-6 md:pt-20 md:pb-20">
@@ -26,14 +32,7 @@ export default function Home() {
           <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl">
             MASA Hackathon 2026: R-Ignite
           </h1>
-          <p className="max-w-3xl text-lg leading-relaxed text-[rgba(248,244,246,0.85)]">
-            MASA is back with its annual flagship competition in 2026 themed “MASA Hackathon
-            2026: R-Ignite”. This two-month event offers Actuarial Science students an opportunity
-            to apply theoretical knowledge to real-world problems, gain hands-on experience,
-            enhance analytical skills, and network with industry professionals. The hackathon
-            bridges academia and industry, fostering innovation and preparing participants for
-            future challenges in the actuarial field.
-          </p>
+          <HeroIntroToggle shortText={introShort} fullText={introFull} />
           <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <Link href="/register" className="btn-primary w-full sm:w-auto justify-center">
               Register Interest (Coming Soon)
@@ -57,28 +56,6 @@ export default function Home() {
               <p className="text-lg font-semibold text-white break-words">
                 hackathon@masassociation.org
               </p>
-            </div>
-          </div>
-        </div>
-        <div className="flex-1">
-          <div className="glass-panel space-y-4 p-6 shadow-card">
-            <p className="text-sm font-semibold text-white">Execution steps</p>
-            <ul className="space-y-3">
-              {executionPhases.map((phase) => (
-                <li key={phase.title} className="rounded-lg border border-border/70 bg-[rgba(255,255,255,0.02)] p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-sm font-semibold text-white">{phase.title}</p>
-                      <p className="text-sm text-[rgba(248,244,246,0.75)]">{phase.description}</p>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <div className="rounded-lg border border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.08)] p-3 text-sm text-[rgba(248,244,246,0.85)]">
-              Participants work with an insurance-related dataset and learn data preprocessing during the
-              workshop, then build predictive models, generate reports, and create visualisations. Top 6 teams
-              are shortlisted to proceed to the Grand Final and present to judges.
             </div>
           </div>
         </div>

@@ -31,10 +31,6 @@ export default function OrganisingTeamPage({ searchParams }: PageProps) {
           People
         </p>
         <h1 className="text-4xl font-bold text-white">Organising Team</h1>
-        <p className="text-lg text-[rgba(248,244,246,0.85)]">
-          Browse the committee by function. Use the tabs to switch between Chairperson, Operation, Corporate
-          Relations, and Marketing.
-        </p>
       </div>
 
       <div className="mt-8 rounded-3xl border border-border/80 bg-[rgba(255,255,255,0.03)] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] md:p-8">
