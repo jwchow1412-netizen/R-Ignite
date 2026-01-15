@@ -1,10 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import Timeline from "@/components/Timeline";
 import HeroIntroToggle from "@/components/HeroIntroToggle";
-import { timelineItems, whyJoin } from "@/lib/data";
-
-const shortTimeline = timelineItems.slice(0, 3);
+import ScrollTimeline from "@/components/ScrollTimeline";
+import { whyJoin } from "@/lib/data";
 
 export default function Home() {
   const introFull =
@@ -13,7 +11,7 @@ export default function Home() {
     "MASA is back with its annual flagship competition in 2026 themed “MASA Hackathon 2026: R-Ignite”. This two-month event offers Actuarial Science students an opportunity to apply theoretical knowledge to real-world problems and gain hands-on experience.";
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative">
       <section className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pt-16 pb-14 md:flex-row md:items-center md:gap-12 md:px-6 md:pt-20 md:pb-20">
         <div className="flex-1 space-y-6">
           <div className="flex flex-wrap items-center gap-3">
@@ -79,26 +77,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-16 md:px-6">
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.7)]">
-            Key Dates
-          </p>
-          <h2 className="text-3xl font-bold text-white">Save the milestones</h2>
-          <p className="text-[rgba(248,244,246,0.8)]">
-            Follow the journey from registration through the Grand Final. Full details are available in the
-            timeline page.
-          </p>
-        </div>
-        <div className="mt-6">
-          <Timeline items={shortTimeline} />
-          <div className="mt-4">
-            <Link href="/timeline" className="btn-secondary">
-              View full timeline
-            </Link>
-          </div>
-        </div>
-      </section>
+      <ScrollTimeline />
 
       <section className="mx-auto max-w-6xl px-4 pb-20 md:px-6">
         <div className="glass-panel grid gap-6 p-6 md:grid-cols-[2fr,1fr] md:items-center">
