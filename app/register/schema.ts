@@ -8,7 +8,7 @@ export const registerSchema = z.object({
     yearOfStudy: z.string().min(1, { message: "Year of study is required." }),
     course: z.string().min(2, { message: "Course/Major is required." }),
     interestType: z.enum(["individual", "team_finding", "team_ready"], {
-        errorMap: () => ({ message: "Please select your participation preference." }),
+        message: "Please select your participation preference.",
     }),
 })
 
