@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Space_Grotesk } from "next/font/google";
@@ -45,6 +46,7 @@ export default function RootLayout({
           <Footer />
         </div>
       </body>
+      <GoogleAnalytics gaId="G-RY1EQBB6YJ" />
     </html>
   );
 }
