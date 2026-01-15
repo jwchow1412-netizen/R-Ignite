@@ -39,6 +39,7 @@ To store registration data in Google Sheets, you need to set up a Google Service
     *   **F1**: Year of Study
     *   **G1**: Course
     *   **H1**: Interest Type
+    *   **IMPORTANT**: Ensure the **tab name** at the very bottom of the screen is `Sheet1`. If you renamed it to something else (e.g., "Registrations"), the API will fail unless you rename it back to `Sheet1`.
 4.  **CRITICAL STEP**: Click the **Share** button (top right).
 5.  Paste the **Service Account Email** (from Step 3.5) into the "Add people" box.
 6.  Ensure it is set to **Editor**.
