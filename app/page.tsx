@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Timeline from "@/components/Timeline";
 import HeroIntroToggle from "@/components/HeroIntroToggle";
-import { executionPhases, timelineItems, whyJoin } from "@/lib/data";
+import { timelineItems, whyJoin } from "@/lib/data";
 
 const shortTimeline = timelineItems.slice(0, 3);
 
