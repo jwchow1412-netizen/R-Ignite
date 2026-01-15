@@ -8,24 +8,24 @@ const resources = [
   {
     title: "Participant Handbook",
     href: "/downloads/handbook.pdf",
-    description: "Competition overview and guidance. Replace this placeholder PDF with the official handbook.",
+    description: "Competition overview and guidance.",
   },
   {
     title: "Problem Statement",
     href: "/downloads/problem-statement.pdf",
-    description: "Problem statement will be announced soon. Current file is a placeholder.",
+    description: "Problem statement will be announced soon.",
     comingSoon: true,
   },
   {
     title: "Judging Rubric",
     href: "/downloads/rubric.pdf",
-    description: "Judging criteria and scoring breakdown. Placeholder until final rubric is released.",
+    description: "Judging criteria and scoring breakdown.",
     comingSoon: true,
   },
   {
     title: "Terms & Conditions",
     href: "/downloads/terms-and-conditions.pdf",
-    description: "Participant obligations and policies. Placeholder until official terms are published.",
+    description: "Participant obligations and policies.",
     comingSoon: true,
   },
 ];
