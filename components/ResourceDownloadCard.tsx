@@ -28,13 +28,18 @@ export default function ResourceDownloadCard({
         ) : null}
       </div>
       <Button
-        asChild
+        asChild={!comingSoon}
+        disabled={comingSoon}
         variant="download"
-        className={`w-full justify-center ${comingSoon ? "opacity-70" : ""}`}
+        className={`w-full justify-center ${comingSoon ? "opacity-70 cursor-not-allowed" : ""}`}
       >
-        <Link href={href} download>
-          Download
-        </Link>
+        {comingSoon ? (
+          <span>Coming Soon</span>
+        ) : (
+          <Link href={href} download>
+            Download
+          </Link>
+        )}
       </Button>
     </div>
   );

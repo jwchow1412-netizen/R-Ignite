@@ -54,7 +54,7 @@ export default function LandingPage() {
                             </Link>
                         </Button>
                         <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto h-12 text-base px-8">
-                            <Link href="/downloads/handbook.pdf">
+                            <Link href="/resources">
                                 Download Handbook
                             </Link>
                         </Button>

@@ -53,59 +53,69 @@ export default function ScrollTimeline() {
     // The tall container that creates the scroll track
     <section ref={targetRef} className="relative" style={{ height: "300vh" }}>
       {/* The sticky viewport that freezes */}
-      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden bg-transparent px-4 py-20 md:px-6 md:py-24">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.7)]">
-              Timeline
-            </p>
-            <h2 className="text-3xl font-bold text-white">Save the milestones</h2>
-          </div>
-          <p className="text-sm text-[rgba(248,244,246,0.75)]">Scroll to reveal what&apos;s next.</p>
+      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden bg-transparent">
+
+        {/* Header Section */}
+        <div className="absolute top-8 left-0 right-0 z-20 mx-auto max-w-6xl px-4 text-center md:top-12">
+          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.7)] animate-pulse">
+            Scroll Down to Explore
+          </p>
+          <h2 className="mt-2 text-3xl font-bold text-white md:text-4xl text-glow-pink">
+            Timeline Journey
+          </h2>
         </div>
 
-        <div className="relative mx-auto mt-12 w-full max-w-6xl overflow-hidden">
-          {/* Central Timeline Track */}
-          <div className="absolute left-0 top-1/2 block h-0.5 w-full -translate-y-1/2 bg-[rgba(255,255,255,0.1)]" />
+        <div className="relative mx-auto w-full max-w-[90%] overflow-visible md:max-w-7xl">
+          {/* Central Timeline Axis (The "Sun" path) */}
+          <div className="absolute left-0 top-1/2 block h-1 w-full -translate-y-1/2 bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.4)] to-transparent shadow-[0_0_15px_rgba(212,100,118,0.5)]" />
 
           {/* Horizontally scrolling track */}
           <motion.div
             ref={trackRef}
             style={{ x }}
-            className="relative z-10 flex gap-6 items-center md:gap-5"
+            className="relative z-10 flex gap-12 items-center px-10 md:gap-20"
           >
             {timelineItems.map((item, index) => {
               const isEven = index % 2 === 0;
               return (
-                <div key={item.title} className="relative min-w-[280px] flex-1">
+                <div key={item.title} className="relative flex flex-col items-center justify-center min-w-[320px]">
+
+                  {/* Connection Line (Vertical) */}
+                  <div
+                    className={`absolute w-0.5 bg-gradient-to-b from-[rgba(255,255,255,0.5)] to-transparent transition-all duration-500
+                    ${isEven ? "bottom-1/2 h-20 md:h-28" : "top-1/2 h-20 md:h-28"}`}
+                  />
+
+                  {/* Central Node (The "Planet") */}
+                  <div className="absolute top-1/2 left-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#0e080f] shadow-[0_0_10px_#fff] z-20" />
+
+                  {/* Card */}
                   <motion.div
-                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                    viewport={{ once: true, margin: "-50px" }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className={`glass-panel relative flex h-full min-h-[180px] flex-col justify-between border bg-[rgba(255,255,255,0.05)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] ${isEven
-                        ? "md:-translate-y-8 border-[rgba(248,153,36,0.35)]"
-                        : "md:translate-y-8 border-[rgba(217,63,67,0.35)]"
+                    className={`glass-panel relative flex flex-col justify-between border bg-[rgba(255,255,255,0.03)] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl w-full
+                      ${isEven
+                        ? "mb-[200px] md:mb-[250px] border-b-4 border-b-[rgba(248,153,36,0.6)]"
+                        : "mt-[200px] md:mt-[250px] border-t-4 border-t-[rgba(212,100,118,0.6)]"
                       }`}
                   >
-                    {/* Top line for bottom items (odd) */}
-                    {!isEven && (
-                      <div className="absolute left-1/2 top-[-34px] hidden h-9 w-0.5 -translate-x-1/2 bg-[rgba(255,255,255,0.15)] md:block" />
-                    )}
-
-                    {/* Bottom line for top items (even) */}
-                    {isEven && (
-                      <div className="absolute left-1/2 bottom-[-34px] hidden h-9 w-0.5 -translate-x-1/2 bg-[rgba(255,255,255,0.15)] md:block" />
-                    )}
-
-                    <span className="self-start rounded-full bg-[rgba(248,153,36,0.2)] px-3 py-1 text-xs font-semibold text-white">
-                      Coming Soon
-                    </span>
-                    <div>
-                      <h3 className="mt-3 text-xl font-semibold text-white">{item.title}</h3>
-                      <p className="mt-1 text-sm font-medium text-[rgba(248,244,246,0.8)]">{item.date}</p>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`text-xs font-bold px-2 py-1 rounded bg-[rgba(255,255,255,0.1)] 
+                          ${isEven ? "text-[rgba(248,153,36,1)]" : "text-[rgba(212,100,118,1)]"}`}>
+                        {item.date}
+                      </span>
+                      {item.title.includes("Final") && (
+                        <span className="h-2 w-2 rounded-full bg-red-500 animate-ping" />
+                      )}
                     </div>
+                    <h3 className="text-xl font-bold text-white">{item.title}</h3>
+                    <p className="mt-2 text-sm text-[rgba(248,244,246,0.7)] leading-relaxed">
+                      Stay tuned for more details.
+                    </p>
                   </motion.div>
+
                 </div>
               );
             })}
