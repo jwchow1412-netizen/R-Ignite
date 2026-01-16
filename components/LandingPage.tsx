@@ -88,25 +88,49 @@ export default function LandingPage() {
                 viewport={{ once: true, margin: "-100px" }}
                 variants={staggerContainer}
             >
-                <div className="flex flex-col gap-6">
-                    <motion.div variants={fadeIn} className="flex flex-col gap-2">
-                        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.7)]">
-                            Why Join Us
-                        </p>
-                        <h2 className="text-3xl font-bold text-white">Built for actuarial students and partners</h2>
-                    </motion.div>
-                    <div className="grid gap-4 md:grid-cols-2">
-                        {whyJoin.map((item, index) => (
-                            <motion.div
-                                key={item}
-                                variants={slideUp}
-                                className="glass-panel p-5"
-                                custom={index}
-                            >
-                                <p className="text-base text-[rgba(248,244,246,0.9)]">{item}</p>
-                            </motion.div>
-                        ))}
+                <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 lg:items-center">
+                    <div className="flex flex-col gap-6">
+                        <motion.div variants={fadeIn} className="flex flex-col gap-2">
+                            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.7)]">
+                                Why Join Us
+                            </p>
+                            <h2 className="text-3xl font-bold text-white">Built for actuarial students and partners</h2>
+                        </motion.div>
+
+                        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                            {whyJoin.map((item, index) => (
+                                <motion.div
+                                    key={item}
+                                    variants={slideUp}
+                                    className="glass-panel p-5 transition-transform hover:scale-[1.02]"
+                                    custom={index}
+                                >
+                                    <p className="text-base text-[rgba(248,244,246,0.9)]">{item}</p>
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
+
+                    {/* Image Column */}
+                    <motion.div variants={fadeIn} className="relative group">
+                        {/* Decorative glowing background */}
+                        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-[rgba(212,100,118,0.4)] to-[rgba(248,153,36,0.1)] opacity-70 blur-lg transition duration-500 group-hover:opacity-100" />
+
+                        <div className="glass-panel relative overflow-hidden rounded-2xl p-2">
+                            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
+                                <Image
+                                    src="/masa-hackathon-2025-highlight.png"
+                                    alt="MASA Hackathon 2025 Participants"
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-12">
+                                    <p className="text-sm font-medium text-white">MASA Hackathon 2025 Highlights</p>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </motion.section>
 
