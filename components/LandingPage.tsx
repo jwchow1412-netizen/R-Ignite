@@ -212,28 +212,47 @@ export default function LandingPage() {
 
             {/* Become a Sponsor Section */}
             <motion.section
-                className="mx-auto max-w-4xl px-4 pb-20 md:px-6 text-center"
+                className="mx-auto max-w-5xl px-4 pb-24 md:px-6"
                 initial="initial"
                 whileInView="animate"
                 viewport={{ once: true }}
                 variants={fadeIn}
             >
-                <div className="glass-panel relative overflow-hidden rounded-xl p-8 md:p-12">
-                    {/* Background Glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5" />
+                <div className="group relative mx-auto max-w-4xl rounded-3xl p-[1px] transition-all hover:scale-[1.01]">
+                    {/* Gradient Border & Outer Glow */}
+                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[#D46476] via-[#F89924] to-[#D46476] opacity-60 blur-sm transition-all duration-500 group-hover:opacity-100 group-hover:blur-md" />
 
-                    <div className="relative z-10 flex flex-col items-center gap-6">
-                        <h3 className="text-3xl font-bold text-white sm:text-4xl">Become a Sponsor</h3>
-                        <p className="max-w-2xl text-lg text-[rgba(248,244,246,0.8)]">
-                            Join us as a sponsor or partner of the MASA Hackathon and gain meaningful exposure to actuarial and data-driven students, while supporting the development of analytical, technical, and problem-solving skills essential to the future workforce.
-                        </p>
+                    {/* Card Container */}
+                    <div className="relative overflow-hidden rounded-3xl bg-black/80 backdrop-blur-xl p-8 md:p-16 text-center">
 
-                        <div className="flex flex-wrap justify-center gap-4">
-                            <Button asChild size="lg" className="bg-white text-black hover:bg-white/90">
-                                <Link href="mailto:hackathon@masassociation.org">
-                                    Sponsorship Opportunities
-                                </Link>
-                            </Button>
+                        {/* Inner Ambient Glows */}
+                        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#D46476]/20 blur-[100px] rounded-full pointer-events-none" />
+                        <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#F89924]/20 blur-[100px] rounded-full pointer-events-none" />
+
+                        {/* Content */}
+                        <div className="relative z-10 flex flex-col items-center gap-8">
+                            <div className="space-y-4">
+                                <h3 className="text-3xl font-bold tracking-tight text-white sm:text-5xl">
+                                    Become a <span className="bg-gradient-to-r from-[#D46476] to-[#F89924] bg-clip-text text-transparent">Sponsor</span>
+                                </h3>
+                                <p className="mx-auto max-w-2xl text-lg text-white/70 leading-relaxed">
+                                    Join our cosmic community of sponsors and partners to showcase your brand to the brightest minds in tech while supporting the future of innovation.
+                                </p>
+                            </div>
+
+                            <div className="flex flex-wrap justify-center gap-4">
+                                <Button
+                                    asChild
+                                    size="lg"
+                                    className="relative h-14 overflow-hidden rounded-full border border-white/10 bg-white/5 px-10 text-lg font-medium text-white transition-all hover:bg-white/10 hover:scale-105"
+                                >
+                                    <Link href="mailto:hackathon@masassociation.org">
+                                        <span className="relative z-10">Sponsorship Opportunities</span>
+                                        {/* Button Hover Gradient */}
+                                        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#D46476]/20 to-[#F89924]/20 opacity-0 transition-opacity group-hover:opacity-100" />
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
