@@ -207,39 +207,27 @@ export default function LandingPage() {
             <ScrollTimeline />
 
             {/* Become a Sponsor Section */}
-            {/* Become a Sponsor Section */}
             <motion.section
-                className="mx-auto max-w-5xl px-4 pb-24 md:px-6"
+                className="mx-auto max-w-4xl px-4 pb-20 md:px-6 text-center"
                 initial="initial"
                 whileInView="animate"
                 viewport={{ once: true }}
                 variants={fadeIn}
             >
-                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 md:p-16 text-center">
-                    {/* Background Effects */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#D46476]/10 via-transparent to-[#F89924]/10 opacity-50" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent" />
+                <div className="glass-panel relative overflow-hidden rounded-xl p-8 md:p-12">
+                    {/* Background Glow */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5" />
 
-                    {/* Content */}
-                    <div className="relative z-10 flex flex-col items-center gap-8">
-                        <div className="space-y-4">
-                            <h3 className="text-3xl font-bold tracking-tight text-white sm:text-5xl">
-                                Become a <span className="bg-gradient-to-r from-[#D46476] to-[#F89924] bg-clip-text text-transparent">Sponsor</span>
-                            </h3>
-                            <p className="mx-auto max-w-2xl text-lg text-white/70 leading-relaxed">
-                                Join our cosmic community of sponsors and partners to showcase your brand to the brightest minds in tech while supporting the future of innovation.
-                            </p>
-                        </div>
+                    <div className="relative z-10 flex flex-col items-center gap-6">
+                        <h3 className="text-3xl font-bold text-white sm:text-4xl">Become a Sponsor</h3>
+                        <p className="max-w-2xl text-lg text-[rgba(248,244,246,0.8)]">
+                            Join us as a sponsor or partner of the MASA Hackathon and gain meaningful exposure to actuarial and data-driven students, while supporting the development of analytical, technical, and problem-solving skills essential to the future workforce.
+                        </p>
 
                         <div className="flex flex-wrap justify-center gap-4">
-                            <Button
-                                asChild
-                                size="lg"
-                                className="relative h-14 overflow-hidden rounded-full border border-white/20 bg-white/10 px-10 text-lg font-medium text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-105"
-                            >
+                            <Button asChild size="lg" className="bg-white text-black hover:bg-white/90">
                                 <Link href="mailto:hackathon@masassociation.org">
-                                    <span className="relative z-10">Sponsorship Opportunities</span>
-                                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#D46476]/20 to-[#F89924]/20 opacity-0 transition-opacity group-hover:opacity-100" />
+                                    Sponsorship Opportunities
                                 </Link>
                             </Button>
                         </div>
