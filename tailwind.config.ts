@@ -38,6 +38,15 @@ const config: Config = {
         "panel-gradient":
           "linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))",
       },
+      animation: {
+        scroll: "scroll 40s linear infinite",
+      },
+      keyframes: {
+        scroll: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+      },
     },
   },
   plugins: [],

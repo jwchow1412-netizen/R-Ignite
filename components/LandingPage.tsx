@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import ScrollTimeline from "@/components/ScrollTimeline";
+import SponsorScroll from "@/components/SponsorScroll";
 import { InteractiveBackground } from './InteractiveBackground';
 import { whyJoin } from "@/lib/data";
 import { scaleUp, fadeIn, slideUp, staggerContainer } from "@/lib/animations";
@@ -205,6 +206,9 @@ export default function LandingPage() {
 
             {/* Timeline */}
             <ScrollTimeline />
+
+            {/* Sponsor Infinite Scroll */}
+            <SponsorScroll />
 
             {/* Become a Sponsor Section */}
             <motion.section
