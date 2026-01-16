@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import HeroIntroToggle from "@/components/HeroIntroToggle";
 import ScrollTimeline from "@/components/ScrollTimeline";
 import { InteractiveBackground } from './InteractiveBackground';
 import { whyJoin } from "@/lib/data";
@@ -12,10 +11,6 @@ import { scaleUp, fadeIn, slideUp, staggerContainer } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
-    const introFull =
-        "MASA is back with its annual flagship competition in 2026 themed “MASA Hackathon 2026: R-Ignite”. This two-month event offers Actuarial Science students an opportunity to apply theoretical knowledge to real-world problems, gain hands-on experience, enhance analytical skills, and network with industry professionals. The hackathon bridges academia and industry, fostering innovation and preparing participants for future challenges in the actuarial field.";
-    const introShort =
-        "MASA is back with its annual flagship competition in 2026 themed “MASA Hackathon 2026: R-Ignite”. This two-month event offers Actuarial Science students an opportunity to apply theoretical knowledge to real-world problems and gain hands-on experience.";
 
     const [isLoaded, setIsLoaded] = useState(false);
 

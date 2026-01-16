@@ -60,7 +60,7 @@ export const InteractiveBackground = () => {
 
             {/* Floating Spark Particles */}
             {Array.from({ length: 20 }).map((_, i) => (
-                <SparkParticle key={i} index={i} />
+                <SparkParticle key={i} />
             ))}
 
             {/* Vignette & Color Overlays */}
@@ -70,7 +70,7 @@ export const InteractiveBackground = () => {
     )
 }
 
-const SparkParticle = ({ index }: { index: number }) => {
+const SparkParticle = () => {
     const randomX = Math.random() * 100
     const randomDelay = Math.random() * 5
     const randomDuration = 3 + Math.random() * 4
