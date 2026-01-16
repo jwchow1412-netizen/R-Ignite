@@ -1,12 +1,14 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import HeroIntroToggle from "@/components/HeroIntroToggle";
 import ScrollTimeline from "@/components/ScrollTimeline";
+import { InteractiveBackground } from './InteractiveBackground';
 import { whyJoin } from "@/lib/data";
-import { fadeIn, slideUp, staggerContainer } from "@/lib/animations";
+import { scaleUp, fadeIn, slideUp, staggerContainer } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
@@ -15,69 +17,141 @@ export default function LandingPage() {
     const introShort =
         "MASA is back with its annual flagship competition in 2026 themed “MASA Hackathon 2026: R-Ignite”. This two-month event offers Actuarial Science students an opportunity to apply theoretical knowledge to real-world problems and gain hands-on experience.";
 
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        setIsLoaded(true);
+    }, []);
+
     return (
         <div className="relative">
             {/* Hero Section */}
             <motion.section
-                className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pt-16 pb-14 md:flex-row md:items-center md:gap-12 md:px-6 md:pt-20 md:pb-20"
-                initial="initial"
-                animate="animate"
+                className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-32"
+                initial="hidden"
+                animate={isLoaded ? "visible" : "hidden"}
                 variants={staggerContainer}
             >
-                <div className="flex-1 space-y-6">
-                    <motion.div variants={fadeIn} className="flex flex-wrap items-center gap-3">
-                        <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-[rgba(212,100,118,0.35)] bg-[rgba(212,100,118,0.12)]">
-                            <Image
-                                src="/logo.svg"
-                                alt="R-Ignite logo"
-                                fill
-                                sizes="56px"
-                                className="object-cover"
-                                priority
-                            />
+                <InteractiveBackground />
+
+                <div className="container relative z-10 mx-auto px-4 text-center">
+                    <motion.div variants={fadeIn} className="mx-auto max-w-4xl space-y-8">
+                        {/* Logo / Badge */}
+                        <div className="mx-auto flex w-fit items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-md transition-colors hover:border-white/20">
+                            <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gradient-to-br from-[#D46476] to-[#F89924] p-[1px]">
+                                <div className="flex h-full w-full items-center justify-center rounded-full bg-black">
+                                    <div className="relative h-5 w-5">
+                                        <Image src="/logo.svg" alt="R-Ignite Logo" fill className="object-contain" />
+                                    </div>
+                                </div>
+                            </div>
+                            <span className="text-sm font-medium text-white/90">
+                                Malaysian Actuarial Student Association (MASA)
+                            </span>
                         </div>
-                        <span className="badge-soft">Malaysian Actuarial Student Association (MASA)</span>
-                    </motion.div>
 
-                    <motion.h1 variants={slideUp} className="text-4xl font-bold leading-tight text-white md:text-5xl">
-                        MASA Hackathon 2026: R-Ignite
-                    </motion.h1>
+                        {/* Animated Text Content */}
+                        <div className="space-y-4">
+                            <motion.h1
+                                className="bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-5xl font-bold tracking-tight text-transparent sm:text-7xl lg:text-8xl"
+                                variants={slideUp}
+                            >
+                                MASA Hackathon 2026: <br />
+                                <span className="bg-gradient-to-r from-[#D46476] to-[#F89924] bg-clip-text text-transparent">
+                                    R-Ignite
+                                </span>
+                            </motion.h1>
 
-                    <motion.div variants={fadeIn}>
-                        <HeroIntroToggle shortText={introShort} fullText={introFull} />
-                    </motion.div>
+                            <motion.p
+                                className="mx-auto max-w-2xl text-lg text-white/70 sm:text-xl leading-relaxed"
+                                variants={fadeIn}
+                            >
+                                Can you survive the heat? Join us for the ultimate Actuarial Science challenge where innovation meets real-world problem solving.
+                            </motion.p>
+                        </div>
 
-                    <motion.div variants={slideUp} className="flex flex-wrap items-center gap-3 sm:gap-4">
-                        <Button asChild size="lg" className="w-full sm:w-auto h-12 text-base px-8 font-bold">
-                            <Link href="/register">
-                                Register Interest (Coming Soon)
+                        {/* Buttons */}
+                        <motion.div
+                            className="flex flex-col items-center justify-center gap-4 sm:flex-row"
+                            variants={scaleUp}
+                        >
+                            <Button
+                                size="lg"
+                                className="group relative h-12 overflow-hidden bg-gradient-to-r from-[#D46476] to-[#F89924] px-8 text-base font-semibold text-white transition-all hover:scale-105 active:scale-95"
+                                disabled
+                            >
+                                <span className="relative z-10 flex items-center gap-2">
+                                    Register Interest (Coming Soon)
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </span>
+                                {/* Button Glow Effect */}
+                                <div className="absolute inset-0 -z-10 translate-y-full bg-white/20 transition-transform group-hover:translate-y-0" />
+                            </Button>
+
+                            <Link href="/downloads/handbook.pdf" target="_blank">
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    className="h-12 border-white/20 bg-white/5 px-8 text-base text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/40"
+                                >
+                                    Download Handbook
+                                </Button>
                             </Link>
-                        </Button>
-                        <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto h-12 text-base px-8">
-                            <Link href="/resources">
-                                Download Handbook
-                            </Link>
-                        </Button>
-                        <span className="badge-soft">Focus track: Cybersecurity Risk (subject to change)</span>
-                    </motion.div>
 
-                    <motion.div variants={staggerContainer} className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                        <motion.div variants={slideUp} className="glass-panel p-4 sm:p-5">
-                            <p className="text-xs uppercase tracking-[0.14em] text-[rgba(248,244,246,0.65)]">Organizer</p>
-                            <p className="text-lg font-semibold text-white">Malaysian Actuarial Student Association (MASA)</p>
+                            <div className="mt-2 flex items-center justify-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-2 text-xs text-white/60 backdrop-blur-sm sm:mt-0">
+                                <span className="flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                Focus track: Cybersecurity Risk
+                            </div>
                         </motion.div>
-                        <motion.div variants={slideUp} className="glass-panel p-4 sm:p-5">
-                            <p className="text-xs uppercase tracking-[0.14em] text-[rgba(248,244,246,0.65)]">Duration</p>
-                            <p className="text-lg font-semibold text-white">Two-month event</p>
-                        </motion.div>
-                        <motion.div variants={slideUp} className="glass-panel p-4 sm:p-5">
-                            <p className="text-xs uppercase tracking-[0.14em] text-[rgba(248,244,246,0.65)]">Contact</p>
-                            <p className="text-lg font-semibold text-white break-words">
-                                hackathon@masassociation.org
-                            </p>
+
+                        {/* Stats / Info Cards */}
+                        <motion.div
+                            className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3"
+                            variants={fadeIn}
+                        >
+                            {[
+                                { label: "Organizer", value: "MASA", sub: "Malaysian Actuarial Student Association" },
+                                { label: "Duration", value: "2 Months", sub: "Intensive Hackathon" },
+                                { label: "Contact", value: "Email Us", sub: "hackathon@masassociation.org" }
+                            ].map((stat, i) => (
+                                <div key={i} className="glass-panel group relative overflow-hidden rounded-xl p-6 text-center transition-all hover:-translate-y-1 hover:border-white/20">
+                                    <div className="relative z-10">
+                                        <div className="text-xs font-semibold uppercase tracking-wider text-white/40">{stat.label}</div>
+                                        <div className="mt-1 text-lg font-bold text-white">{stat.value}</div>
+                                        <div className="mt-1 text-sm text-white/60">{stat.sub}</div>
+                                    </div>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                                </div>
+                            ))}
                         </motion.div>
                     </motion.div>
                 </div>
+
+                {/* Scroll Indicator */}
+                <motion.div
+                    className="absolute bottom-12 left-0 w-full z-20 flex justify-center"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1, duration: 1 }}
+                >
+                    <div className="flex flex-col items-center gap-2">
+                        <span className="text-xs font-medium uppercase tracking-[0.2em] text-white/40">Scroll to Explore</span>
+                        <motion.div
+                            className="flex h-10 w-6 items-start justify-center rounded-full border border-white/20 bg-white/5 p-1 backdrop-blur-sm"
+                        >
+                            <motion.div
+                                className="h-1.5 w-1.5 rounded-full bg-white/60"
+                                animate={{ y: [0, 16, 0] }}
+                                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                            />
+                        </motion.div>
+                    </div>
+                </motion.div>
             </motion.section>
 
             {/* Why Join Section */}
