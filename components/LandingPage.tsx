@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import ScrollTimeline from "@/components/ScrollTimeline";
 import ToolsGrid from "@/components/ToolsGrid";
 import SponsorScroll from "@/components/SponsorScroll";
+import PrizePool from "@/components/PrizePool";
 import { InteractiveBackground } from './InteractiveBackground';
 import { whyJoin } from "@/lib/data";
 import { scaleUp, fadeIn, slideUp, staggerContainer } from "@/lib/animations";
@@ -204,6 +205,9 @@ export default function LandingPage() {
                     </motion.div>
                 </div>
             </motion.section>
+
+            {/* Prize Pool */}
+            <PrizePool />
 
             {/* Timeline */}
             <ScrollTimeline />
