@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import ScrollTimeline from "@/components/ScrollTimeline";
+import ToolsGrid from "@/components/ToolsGrid";
 import SponsorScroll from "@/components/SponsorScroll";
 import { InteractiveBackground } from './InteractiveBackground';
 import { whyJoin } from "@/lib/data";
@@ -206,6 +207,9 @@ export default function LandingPage() {
 
             {/* Timeline */}
             <ScrollTimeline />
+
+            {/* Tools & Technologies */}
+            <ToolsGrid />
 
             {/* Sponsor Infinite Scroll */}
             <SponsorScroll />
