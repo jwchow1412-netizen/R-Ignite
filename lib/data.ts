@@ -139,7 +139,7 @@ export const organisingRoles = [
     category: "Operation",
   },
   {
-    role: "H.O. Marcom",
+    role: "H.O. Marketing",
     name: "Chow Jian Wei",
     linkedin:
       "https://www.linkedin.com/in/jian-wei-chow-897b842b7?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
@@ -147,14 +147,18 @@ export const organisingRoles = [
     category: "Marketing",
   },
   {
-    role: "Marcom Officer",
+    role: "Marketing Officer",
     name: "Justin Fang Qi Xuan",
+    linkedin:
+      "https://www.linkedin.com/in/justin-fang-qi-xuan-985692298?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
     image: "/team/justin-fang-qi-xuan.jpg",
     category: "Marketing",
   },
   {
-    role: "Marcom Officer",
+    role: "Marketing Officer",
     name: "Low Zi Yu",
+    linkedin:
+      "https://www.linkedin.com/in/low-zi-yu-6755aa313?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
     image: "/team/low-zi-yu.jpg",
     category: "Marketing",
   },
