@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus, MessageSquare, Mail } from "lucide-react";
+import { Plus, Minus, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
