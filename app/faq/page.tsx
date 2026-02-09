@@ -42,7 +42,7 @@ const faqs = [
       {
         question: "What are the key dates?",
         answer:
-          "Registration runs 3rd – 23rd April 2026. Hackathon commences 24th April 2026. Workshop and Briefing is 25th April 2026. Preliminary Round submission is 7th May 2026. Judging Period is 8th – 22nd May 2026. Finalists announcement is 24th May 2026. Grand Final presentation is 6th June 2026.",
+          "Registration runs in April 2026. Hackathon commences in April 2026. Workshop and Briefing is in April 2026. Preliminary Round submission is in May 2026. Judging Period is in May 2026. Finalists announcement is in May 2026. Grand Final presentation is in June 2026.",
       },
       {
         question: "How is the Grand Final conducted?",

@@ -23,7 +23,7 @@ export default function TimelinePage() {
         <div className="glass-panel p-6">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-2xl font-semibold text-white">Workshop &amp; Briefing Itinerary</h2>
-            <span className="badge-soft">25th April 2026</span>
+            <span className="badge-soft">April 2026</span>
           </div>
           <details className="mt-4 rounded-lg border border-border/70 bg-[rgba(255,255,255,0.02)] p-4">
             <summary className="cursor-pointer text-sm font-semibold text-white">View schedule</summary>
@@ -41,7 +41,7 @@ export default function TimelinePage() {
         <div className="glass-panel p-6">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-2xl font-semibold text-white">Grand Final Itinerary</h2>
-            <span className="badge-soft">6th June 2026</span>
+            <span className="badge-soft">June 2026</span>
           </div>
           <p className="mt-2 text-sm text-[rgba(248,244,246,0.85)]">
             Grand Final held physically. Six teams shortlisted from the Preliminary Round present models,
