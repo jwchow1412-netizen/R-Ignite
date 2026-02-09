@@ -98,13 +98,13 @@ export default function LandingPage() {
                                 </Button>
                             </Link>
 
-                            <div className="mt-2 flex items-center justify-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-2 text-xs text-white/60 backdrop-blur-sm sm:mt-0">
+                            {/* <div className="mt-2 flex items-center justify-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-2 text-xs text-white/60 backdrop-blur-sm sm:mt-0">
                                 <span className="flex h-2 w-2">
                                     <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                 </span>
                                 Focus track: Cybersecurity Risk
-                            </div>
+                            </div> */}
                         </motion.div>
 
                         {/* Stats / Info Cards */}
@@ -216,55 +216,57 @@ export default function LandingPage() {
             <ToolsGrid />
 
             {/* Sponsor Infinite Scroll */}
-            <SponsorScroll />
+            {/* <SponsorScroll /> */}
 
             {/* Become a Sponsor Section */}
-            <motion.section
-                className="mx-auto max-w-5xl px-4 pb-24 md:px-6"
-                initial="initial"
-                whileInView="animate"
-                viewport={{ once: true }}
-                variants={fadeIn}
-            >
-                <div className="group relative mx-auto max-w-4xl rounded-3xl p-[1px] transition-all hover:scale-[1.01]">
-                    {/* Gradient Border & Outer Glow */}
-                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[#D46476] via-[#F89924] to-[#D46476] opacity-60 blur-sm transition-all duration-500 group-hover:opacity-100 group-hover:blur-md" />
+            {false && (
+                <motion.section
+                    className="mx-auto max-w-5xl px-4 pb-24 md:px-6"
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={fadeIn}
+                >
+                    <div className="group relative mx-auto max-w-4xl rounded-3xl p-[1px] transition-all hover:scale-[1.01]">
+                        {/* Gradient Border & Outer Glow */}
+                        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[#D46476] via-[#F89924] to-[#D46476] opacity-60 blur-sm transition-all duration-500 group-hover:opacity-100 group-hover:blur-md" />
 
-                    {/* Card Container */}
-                    <div className="relative overflow-hidden rounded-3xl bg-black/80 backdrop-blur-xl p-8 md:p-16 text-center">
+                        {/* Card Container */}
+                        <div className="relative overflow-hidden rounded-3xl bg-black/80 backdrop-blur-xl p-8 md:p-16 text-center">
 
-                        {/* Inner Ambient Glows */}
-                        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#D46476]/20 blur-[100px] rounded-full pointer-events-none" />
-                        <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#F89924]/20 blur-[100px] rounded-full pointer-events-none" />
+                            {/* Inner Ambient Glows */}
+                            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#D46476]/20 blur-[100px] rounded-full pointer-events-none" />
+                            <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#F89924]/20 blur-[100px] rounded-full pointer-events-none" />
 
-                        {/* Content */}
-                        <div className="relative z-10 flex flex-col items-center gap-8">
-                            <div className="space-y-4">
-                                <h3 className="text-3xl font-bold tracking-tight text-white sm:text-5xl">
-                                    Become a <span className="bg-gradient-to-r from-[#D46476] to-[#F89924] bg-clip-text text-transparent">Sponsor</span>
-                                </h3>
-                                <p className="mx-auto max-w-2xl text-lg text-white/70 leading-relaxed">
-                                    Join our cosmic community of sponsors and partners to showcase your brand to the brightest minds in tech while supporting the future of innovation.
-                                </p>
-                            </div>
+                            {/* Content */}
+                            <div className="relative z-10 flex flex-col items-center gap-8">
+                                <div className="space-y-4">
+                                    <h3 className="text-3xl font-bold tracking-tight text-white sm:text-5xl">
+                                        Become a <span className="bg-gradient-to-r from-[#D46476] to-[#F89924] bg-clip-text text-transparent">Sponsor</span>
+                                    </h3>
+                                    <p className="mx-auto max-w-2xl text-lg text-white/70 leading-relaxed">
+                                        Join our cosmic community of sponsors and partners to showcase your brand to the brightest minds in tech while supporting the future of innovation.
+                                    </p>
+                                </div>
 
-                            <div className="flex flex-wrap justify-center gap-4">
-                                <Button
-                                    asChild
-                                    size="lg"
-                                    className="relative h-14 overflow-hidden rounded-full border border-white/10 bg-white/5 px-10 text-lg font-medium text-white transition-all hover:bg-white/10 hover:scale-105"
-                                >
-                                    <Link href="mailto:hackathon@masassociation.org">
-                                        <span className="relative z-10">Sponsorship Opportunities</span>
-                                        {/* Button Hover Gradient */}
-                                        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#D46476]/20 to-[#F89924]/20 opacity-0 transition-opacity group-hover:opacity-100" />
-                                    </Link>
-                                </Button>
+                                <div className="flex flex-wrap justify-center gap-4">
+                                    <Button
+                                        asChild
+                                        size="lg"
+                                        className="relative h-14 overflow-hidden rounded-full border border-white/10 bg-white/5 px-10 text-lg font-medium text-white transition-all hover:bg-white/10 hover:scale-105"
+                                    >
+                                        <Link href="mailto:hackathon@masassociation.org">
+                                            <span className="relative z-10">Sponsorship Opportunities</span>
+                                            {/* Button Hover Gradient */}
+                                            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#D46476]/20 to-[#F89924]/20 opacity-0 transition-opacity group-hover:opacity-100" />
+                                        </Link>
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </motion.section>
+                </motion.section>
+            )}
 
             {/* Contact Section */}
             <motion.section
