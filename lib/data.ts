@@ -121,7 +121,7 @@ export const organisingRoles = [
     role: "H.O. Operation",
     name: "Vong Jun Yi",
     linkedin: "https://www.linkedin.com/in/vongjunyi/",
-    image: "/team/vong-jun-yi.jpg",
+    image: "/team/vong-jun-yi.png",
     category: "Operation",
   },
   {
@@ -191,6 +191,7 @@ export const organisingRoles = [
     name: "Wong Xuen Wen",
     linkedin:
       "https://www.linkedin.com/in/xuen-wen-wong-b77b95272?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    image: "/team/wong-xuen-wen.jpeg",
     category: "Corporate Relations",
   },
 ];

@@ -13,7 +13,6 @@ const mainLinks = [
   { name: "Timeline", href: "/timeline" },
   { name: "Resources", href: "/resources" },
   { name: "FAQ", href: "/faq" },
-  { name: "Register", href: "/register" },
 ];
 
 const peopleLinks = [
@@ -120,10 +119,8 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          <Button asChild>
-            <Link href="/register">
-              Register Interest
-            </Link>
+          <Button disabled variant="secondary" className="opacity-75 cursor-not-allowed">
+            Coming Soon
           </Button>
         </nav>
 
@@ -169,13 +166,11 @@ export default function Navbar() {
               </div>
             </details>
             <Button
-              asChild
-              className="w-full justify-center"
+              disabled
+              className="w-full justify-center opacity-75 cursor-not-allowed"
               onClick={() => setMobileOpen(false)}
             >
-              <Link href="/register">
-                Register Interest
-              </Link>
+              Coming Soon
             </Button>
           </div>
         </div>

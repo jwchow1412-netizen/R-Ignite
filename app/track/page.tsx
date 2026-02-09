@@ -11,13 +11,10 @@ export default function TrackPage() {
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.7)]">
           Track
         </p>
-        <h1 className="text-4xl font-bold text-white">Cybersecurity Risk</h1>
-        <p className="badge-soft w-fit">Subject to change — topic not yet confirmed</p>
+        <h1 className="text-4xl font-bold text-white">Track Theme: Coming Soon</h1>
+        <p className="badge-soft w-fit">To be revealed</p>
         <p className="max-w-4xl text-lg text-[rgba(248,244,246,0.85)]">
-          Cybersecurity Risk is the temporary focus track for MASA Hackathon 2026: R-Ignite. Finalised topic
-          details will be announced soon. Participants will work with an insurance-related dataset and learn
-          data preprocessing during the workshop, then build predictive models, generate reports, and create
-          visualisations.
+          The focus track for MASA Hackathon 2026: R-Ignite will be announced soon. Stay tuned for updates!
         </p>
       </div>
 

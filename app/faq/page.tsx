@@ -32,7 +32,7 @@ const faqs = [
       {
         question: "What is the current focus track?",
         answer:
-          "The temporary focus track is Cybersecurity Risk. The topic is subject to change and final details will be announced.",
+          "The focus track for MASA Hackathon 2026: R-Ignite will be announced soon. Stay tuned for updates!",
       },
       {
         question: "What is the high-level process?",
