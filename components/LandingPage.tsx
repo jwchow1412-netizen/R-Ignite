@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import ScrollTimeline from "@/components/ScrollTimeline";
 import ToolsGrid from "@/components/ToolsGrid";
 import JudgingRubric from "@/components/JudgingRubric";
+import FAQLanding from "@/components/FAQLanding";
 // import SponsorScroll from "@/components/SponsorScroll";
 import PrizePool from "@/components/PrizePool";
 import { InteractiveBackground } from './InteractiveBackground';
@@ -218,6 +219,9 @@ export default function LandingPage() {
 
             {/* Judging Rubric */}
             <JudgingRubric />
+
+            {/* Landing Page FAQ */}
+            <FAQLanding />
 
             {/* Sponsor Infinite Scroll */}
             {/* <SponsorScroll /> */}

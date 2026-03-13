@@ -6,57 +6,12 @@ import { Plus, Minus, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const faqs = [
-  {
-    category: "General",
-    items: [
-      {
-        question: "What is MASA Hackathon 2026: R-Ignite?",
-        answer:
-          "MASA is back with its annual flagship competition in 2026 themed “MASA Hackathon 2026: R-Ignite”. It is a two-month event offering Actuarial Science students an opportunity to apply theoretical knowledge to real-world problems, gain hands-on experience, enhance analytical skills, and network with industry professionals.",
-      },
-      {
-        question: "Who is organising the hackathon?",
-        answer: "The Malaysian Actuarial Student Association (MASA) is organising the event.",
-      },
-      {
-        question: "How do I get more information?",
-        answer:
-          "Resources will be updated under the Downloads section. For enquiries, email hackathon@masassociation.org. Registration and topic details marked Coming Soon will be published when ready.",
-      },
-    ],
-  },
-  {
-    category: "Competition",
-    items: [
-      {
-        question: "What is the current focus track?",
-        answer:
-          "The focus track for MASA Hackathon 2026: R-Ignite will be announced soon. Stay tuned for updates!",
-      },
-      {
-        question: "What is the high-level process?",
-        answer:
-          "Phases include Registration, Pre-Event Briefing and Workshop, Preliminary Round, Judging & Shortlisting, and the Grand Final. Participants work with an insurance-related dataset and learn data preprocessing during the workshop, then build predictive models, generate reports, and create visualisations. Top 6 teams are shortlisted to proceed to the Grand Final and present to judges.",
-      },
-      {
-        question: "What are the key dates?",
-        answer:
-          "Registration runs in April 2026. Hackathon commences in April 2026. Workshop and Briefing is in April 2026. Preliminary Round submission is in May 2026. Judging Period is in May 2026. Finalists announcement is in May 2026. Grand Final presentation is in June 2026.",
-      },
-      {
-        question: "How is the Grand Final conducted?",
-        answer:
-          "The Grand Final is held physically. Six teams shortlisted from the Preliminary Round present models, scenario analyses, strategies and data visualisations. Each team has 15 minutes presentation plus 10 minutes Q&A.",
-      },
-    ],
-  },
-];
+import { faqData as faqs, getFaqCategories } from "@/lib/faqData";
 
-const categories = ["General", "Competition"];
+const categories = getFaqCategories();
 
 export default function FAQPage() {
-  const [activeCategory, setActiveCategory] = useState("General");
+  const [activeCategory, setActiveCategory] = useState(categories[0]);
 
   const filteredFaqs = faqs.find((c) => c.category === activeCategory)?.items || [];
 
