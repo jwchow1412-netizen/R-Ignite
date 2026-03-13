@@ -35,7 +35,7 @@ export default function FAQLanding() {
           Frequently <span className="text-glow-pink">Asked Questions</span>
         </h2>
         <p className="text-[rgba(248,244,246,0.7)] text-lg mb-8">
-          Find answers to the most commonly asked questions below. Search for topics you're interested in or sort by category.
+          Find answers to the most commonly asked questions below. Search for topics you&apos;re interested in or sort by category.
         </p>
 
         <div className="relative">
@@ -104,7 +104,7 @@ export default function FAQLanding() {
                 animate={{ opacity: 1 }}
                 className="text-center py-12 text-white/50"
               >
-                No questions found matching "<span className="text-white">{searchQuery}</span>".
+                No questions found matching &quot;<span className="text-white">{searchQuery}</span>&quot;.
               </motion.div>
             )}
           </AnimatePresence>
