@@ -111,9 +111,11 @@ export default function ScrollTimeline() {
                       )}
                     </div>
                     <h3 className="text-xl font-bold text-white">{item.title}</h3>
-                    <p className="mt-2 text-sm text-[rgba(248,244,246,0.7)] leading-relaxed">
-                      Stay tuned for more details.
-                    </p>
+                    {!/^\d/.test(item.date) && (
+                      <p className="mt-2 text-sm text-[rgba(248,244,246,0.7)] leading-relaxed">
+                        Stay tuned for more details.
+                      </p>
+                    )}
                   </motion.div>
 
                 </div>

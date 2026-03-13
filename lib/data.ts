@@ -24,13 +24,13 @@ export const executionPhases = [
 ];
 
 export const timelineItems = [
-  { date: "April 2026", title: "Registration" },
-  { date: "April 2026", title: "Hackathon Commencement" },
-  { date: "April 2026", title: "Hackathon Workshop and Briefing" },
-  { date: "May 2026", title: "Hackathon Preliminary Round Submission" },
-  { date: "May 2026", title: "Hackathon Judging Period" },
-  { date: "May 2026", title: "Hackathon Finalists Announcement" },
-  { date: "June 2026", title: "Hackathon Presentation (Grand Final)" },
+  { date: "3rd - 23rd April 2026", title: "Registration" },
+  { date: "24th April 2026", title: "Hackathon Commencement" },
+  { date: "25th April 2026", title: "Hackathon Workshop and Briefing" },
+  { date: "7th May 2026", title: "Hackathon Preliminary Round Submission" },
+  { date: "8th - 22nd May 2026", title: "Hackathon Judging Period" },
+  { date: "24th May 2026", title: "Hackathon Finalists Announcement" },
+  { date: "6th June 2026", title: "Hackathon Presentation (Grand Final)" },
 ];
 
 export const workshopSchedule = [

@@ -11,10 +11,10 @@ export default function TrackPage() {
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.7)]">
           Track
         </p>
-        <h1 className="text-4xl font-bold text-white">Track Theme: Coming Soon</h1>
-        <p className="badge-soft w-fit">To be revealed</p>
+        <h1 className="text-4xl font-bold text-white">Track Theme: Climate Risk</h1>
+        <p className="badge-soft w-fit">Climate Risk</p>
         <p className="max-w-4xl text-lg text-[rgba(248,244,246,0.85)]">
-          The focus track for MASA Hackathon 2026: R-Ignite will be announced soon. Stay tuned for updates!
+          Developing equitable disaster-risk financing mechanisms for Southeast Asia by integrating climate data, economic indicators, and ESG principles.
         </p>
       </div>
 
