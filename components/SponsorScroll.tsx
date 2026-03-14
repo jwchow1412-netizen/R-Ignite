@@ -11,10 +11,18 @@ import {
 } from "framer-motion";
 
 const sponsors = [
-    { name: "CAS", logo: "/sponsors/cas.png" },
-    { name: "ASM", logo: "/sponsors/asm.png" },
-    { name: "MASA", logo: "/sponsors/mas.png" },
-    { name: "Sunway Pyramid Ice", logo: "/sponsors/sunway_ice.png" },
+    { name: "ASM", logo: "/sponsors/ASM.png" },
+    { name: "Actuaries Institute", logo: "/sponsors/ActuariesInstitute.png" },
+    { name: "Bayes", logo: "/sponsors/Bayes.png" },
+    { name: "CAS", logo: "/sponsors/CAS.png" },
+    { name: "CUHK", logo: "/sponsors/CUHK.png" },
+    { name: "De Beauty Zone", logo: "/sponsors/DeBeautyZone.jpg" },
+    { name: "Good Morning", logo: "/sponsors/GoodMorning.png" },
+    { name: "Hannover Re", logo: "/sponsors/HannoverRe.png" },
+    { name: "Meeples", logo: "/sponsors/Meeples.jpg" },
+    { name: "Sunway Pyramid Ice", logo: "/sponsors/SunwayIce.png" },
+    { name: "UCSI ASSA", logo: "/sponsors/UCSI ASSA.PNG" },
+    { name: "ZUS", logo: "/sponsors/ZUS.png" },
 ];
 
 // Configuration
@@ -76,11 +84,25 @@ function SponsorCard({
     const zIndex = useTransform(scale, [MIN_SCALE, MAX_SCALE], [0, 50]);
     const opacity = useTransform(scale, [MIN_SCALE, MAX_SCALE], [0.4, 1]);
 
-    // Grayscale: 100% at edges (MIN_SCALE), 0% at center (MAX_SCALE)
-    const grayscale = useTransform(scale, [MIN_SCALE, MAX_SCALE], ["100%", "0%"]);
+    // Combined Grayscale and Drop Shadow Filter
+    const filterStyle = useTransform(scale, (s) => {
+        // Safety clamp for progress between 0 and 1
+        let progress = (s - MIN_SCALE) / (MAX_SCALE - MIN_SCALE);
+        if (progress < 0) progress = 0;
+        if (progress > 1) progress = 1;
+
+        // Grayscale goes from 100% (edges) to 0% (center)
+        const gray = (1 - progress) * 100;
+        
+        // Drop shadow intensity increases as it reaches center (white glow)
+        const blur = progress * 25; 
+        const shadowOpacity = progress * 0.6; // Max 60% opacity white glow
+
+        return `grayscale(${gray}%) drop-shadow(0px 0px ${blur}px rgba(255, 255, 255, ${shadowOpacity}))`;
+    });
 
     // Spotlight Glow Opacity: Only visible near center
-    const glowOpacity = useTransform(scale, [MIN_SCALE, MIN_SCALE + 0.2, MAX_SCALE], [0, 0, 0.8]);
+    const glowOpacity = useTransform(scale, [MIN_SCALE, MIN_SCALE + 0.2, MAX_SCALE], [0, 0, 1]);
 
     return (
         <motion.div
@@ -92,17 +114,17 @@ function SponsorCard({
                 scale: scale,
                 opacity: opacity,
                 zIndex: zIndex,
-                filter: useTransform(grayscale, (v) => `grayscale(${v})`),
+                filter: filterStyle,
             }}
         >
             {/* Spotlight Glow Effect (Behind) */}
             <motion.div
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
                 style={{
-                    width: "120%",
-                    height: "120%",
+                    width: "140%",
+                    height: "140%",
                     opacity: glowOpacity,
-                    background: "radial-gradient(circle, rgba(236,113,150,0.3) 0%, rgba(248,153,36,0.15) 50%, transparent 80%)",
+                    background: "radial-gradient(circle, rgba(236,113,150,0.5) 0%, rgba(248,153,36,0.3) 40%, transparent 70%)",
                 }}
             />
 

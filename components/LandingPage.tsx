@@ -8,7 +8,7 @@ import ScrollTimeline from "@/components/ScrollTimeline";
 import ToolsGrid from "@/components/ToolsGrid";
 import JudgingRubric from "@/components/JudgingRubric";
 import FAQLanding from "@/components/FAQLanding";
-// import SponsorScroll from "@/components/SponsorScroll";
+import SponsorScroll from "@/components/SponsorScroll";
 import PrizePool from "@/components/PrizePool";
 import { InteractiveBackground } from './InteractiveBackground';
 import { whyJoin } from "@/lib/data";
@@ -224,7 +224,7 @@ export default function LandingPage() {
             <FAQLanding />
 
             {/* Sponsor Infinite Scroll */}
-            {/* <SponsorScroll /> */}
+            <SponsorScroll />
 
             {/* Become a Sponsor Section */}
             <motion.section
