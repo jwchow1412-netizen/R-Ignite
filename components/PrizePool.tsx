@@ -6,7 +6,7 @@ import { Trophy, Medal, Star } from "lucide-react";
 const prizes = [
     {
         rank: "1st Runner Up",
-        amount: "RM ???",
+        amount: "RM 2,000",
         icon: <Medal className="h-10 w-10 text-slate-300" />,
         color: "from-slate-300 via-slate-100 to-slate-400",
         bgGlow: "bg-slate-400/20",
@@ -18,7 +18,7 @@ const prizes = [
     },
     {
         rank: "Champion",
-        amount: "RM ???",
+        amount: "RM 3,000",
         icon: <Trophy className="h-12 w-12 text-yellow-400" />,
         color: "from-yellow-400 via-yellow-200 to-yellow-500",
         bgGlow: "bg-yellow-400/20",
@@ -30,7 +30,7 @@ const prizes = [
     },
     {
         rank: "2nd Runner Up",
-        amount: "RM ???",
+        amount: "RM 1,000",
         icon: <Medal className="h-10 w-10 text-orange-400" />,
         color: "from-orange-400 via-orange-200 to-orange-500",
         bgGlow: "bg-orange-400/20",
