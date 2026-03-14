@@ -76,18 +76,20 @@ export default function LandingPage() {
                             variants={scaleUp}
                         >
                             <Button
+                                asChild
                                 size="lg"
                                 className="group relative h-12 overflow-hidden bg-gradient-to-r from-[#D46476] to-[#F89924] px-8 text-base font-semibold text-white transition-all hover:scale-105 active:scale-95"
-                                disabled
                             >
-                                <span className="relative z-10 flex items-center gap-2">
-                                    Team Registration (Coming Soon)
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                </span>
-                                {/* Button Glow Effect */}
-                                <div className="absolute inset-0 -z-10 translate-y-full bg-white/20 transition-transform group-hover:translate-y-0" />
+                                <Link href="https://docs.google.com/forms/d/e/1FAIpQLSfTOyeH4B4OYs_yuLv7MEi5EgzXpWTqX1KCSRBz6u-yKUlWPg/viewform?usp=sharing&ouid=106110738148825842904" target="_blank" rel="noopener noreferrer">
+                                    <span className="relative z-10 flex items-center gap-2">
+                                        Team Registration
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                        </svg>
+                                    </span>
+                                    {/* Button Glow Effect */}
+                                    <div className="absolute inset-0 -z-10 translate-y-full bg-white/20 transition-transform group-hover:translate-y-0" />
+                                </Link>
                             </Button>
 
                             <Link href="/downloads/handbook.pdf" target="_blank">

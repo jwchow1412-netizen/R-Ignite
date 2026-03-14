@@ -119,8 +119,10 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          <Button disabled variant="secondary" className="opacity-75 cursor-not-allowed">
-            Coming Soon
+          <Button asChild variant="secondary">
+            <Link href="https://docs.google.com/forms/d/e/1FAIpQLSfTOyeH4B4OYs_yuLv7MEi5EgzXpWTqX1KCSRBz6u-yKUlWPg/viewform?usp=sharing&ouid=106110738148825842904" target="_blank" rel="noopener noreferrer">
+              Register
+            </Link>
           </Button>
         </nav>
 
@@ -166,11 +168,13 @@ export default function Navbar() {
               </div>
             </details>
             <Button
-              disabled
-              className="w-full justify-center opacity-75 cursor-not-allowed"
+              asChild
+              className="w-full justify-center"
               onClick={() => setMobileOpen(false)}
             >
-              Coming Soon
+              <Link href="https://docs.google.com/forms/d/e/1FAIpQLSfTOyeH4B4OYs_yuLv7MEi5EgzXpWTqX1KCSRBz6u-yKUlWPg/viewform?usp=sharing&ouid=106110738148825842904" target="_blank" rel="noopener noreferrer">
+                Register
+              </Link>
             </Button>
           </div>
         </div>
