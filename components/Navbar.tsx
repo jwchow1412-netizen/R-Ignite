@@ -13,6 +13,7 @@ const mainLinks = [
   { name: "Timeline", href: "/timeline" },
   { name: "Resources", href: "/resources" },
   { name: "FAQ", href: "/faq" },
+  { name: "CUHK", href: "/cuhk" },
 ];
 
 const peopleLinks = [
