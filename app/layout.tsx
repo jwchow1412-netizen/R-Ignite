@@ -1,9 +1,11 @@
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from "next";
+import type { User } from "@supabase/supabase-js";
 import localFont from "next/font/local";
 import { Space_Grotesk } from "next/font/google";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { hasSupabaseEnv } from "@/utils/supabase/config";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -30,18 +32,39 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import { createClient } from "@/utils/supabase/server";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let user: User | null = null;
+  let isAdmin = false;
+
+  if (hasSupabaseEnv()) {
+    const supabase = createClient();
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+
+    if (data.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+      isAdmin = profile?.role === "admin";
+    }
+  }
+
   return (
     <html lang="en">
       <body
         className={`${spaceGrotesk.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="min-h-screen flex flex-col">
-          <Navbar />
+          <Navbar user={user} isAdmin={isAdmin} />
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
