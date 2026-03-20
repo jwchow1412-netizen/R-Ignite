@@ -40,22 +40,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   let user: User | null = null;
-  let isAdmin = false;
 
   if (hasSupabaseEnv()) {
     const supabase = createClient();
     const { data } = await supabase.auth.getUser();
     user = data.user;
-
-    if (data.user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .maybeSingle();
-
-      isAdmin = profile?.role === "admin";
-    }
   }
 
   return (
@@ -64,7 +53,7 @@ export default async function RootLayout({
         className={`${spaceGrotesk.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="min-h-screen flex flex-col">
-          <Navbar user={user} isAdmin={isAdmin} />
+          <Navbar user={user} />
           <main className="flex-1">{children}</main>
           <Footer />
         </div>

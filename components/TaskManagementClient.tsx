@@ -150,7 +150,7 @@ export default function TaskManagementClient({ tasks }: { tasks: AdminTaskRow[] 
               </Button>
               <form action={deleteRewardTask}>
                 <input type="hidden" name="taskId" value={task.id} />
-                <Button size="icon" variant="destructive" type="submit">
+                <Button size="icon" variant="outline" className="text-red-500 border-red-500/50 hover:bg-red-500/20" type="submit">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </form>

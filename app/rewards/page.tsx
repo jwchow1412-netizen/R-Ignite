@@ -60,6 +60,7 @@ type LeaderboardRow = {
 type RewardsTask = RewardTaskBlueprint & {
   id: string
   source: 'live' | 'fallback'
+  imageUrl: string | null
 }
 
 function getDisplayName(fullName: string | null | undefined, email: string | null | undefined) {
@@ -235,8 +236,6 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
       : rewardTaskBlueprints.map((blueprint) => ({
         ...blueprint,
         id: blueprint.slug,
-        status: getTaskStatus(blueprint.slug),
-        proofUrl: getTaskProofUrl(blueprint.slug),
         source: 'fallback' as const,
         imageUrl: null,
       }))
@@ -340,7 +339,6 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
       leaderboard={leaderboardItems}
       leaderboardReady={leaderboardReady}
       personalRank={personalRank}
-      submissions={liveSubmissions}
       isPortalOpen={isPortalOpen}
     />
   )
