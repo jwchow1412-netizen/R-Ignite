@@ -38,6 +38,7 @@ type TaskRow = {
   points: number
   type: string
   requires_proof: boolean
+  image_url: string | null
 }
 
 type SubmissionRow = {
@@ -157,8 +158,16 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
 
   const { data: liveTasksData, error: liveTasksError } = await supabase
     .from('tasks')
-    .select('id, title, description, points, type, requires_proof')
+    .select('id, title, description, points, type, requires_proof, image_url')
     .order('points', { ascending: false })
+
+  const { data: settingsData } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'rewards_portal_status')
+    .maybeSingle()
+
+  const isPortalOpen = settingsData?.value?.is_open ?? true
 
   if (!liveTasksError && liveTasksData) {
     liveTasksReady = true
@@ -219,14 +228,18 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
             verification: matchedBlueprint?.verification ?? defaultVerificationCopy(task),
             proofPlaceholder:
               matchedBlueprint?.proofPlaceholder ?? defaultProofPlaceholder(task),
+            imageUrl: task.image_url ?? null,
             source: 'live',
           }
         })
-      : rewardTaskBlueprints.map((task) => ({
-          ...task,
-          id: task.slug,
-          source: 'fallback' as const,
-        }))
+      : rewardTaskBlueprints.map((blueprint) => ({
+        ...blueprint,
+        id: blueprint.slug,
+        status: getTaskStatus(blueprint.slug),
+        proofUrl: getTaskProofUrl(blueprint.slug),
+        source: 'fallback' as const,
+        imageUrl: null,
+      }))
 
   const submissionsByTaskId = new Map(liveSubmissions.map((submission) => [submission.task_id, submission]))
   const approvedPointsFromSubmissions = liveSubmissions.reduce((sum, submission) => {
@@ -241,6 +254,37 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
   const progressToLuckyDraw = Math.min((currentPoints / luckyDrawMinimumPoints) * 100, 100)
   const proofSubmissionEnabled = liveTasksReady && submissionsReady
   const message = getSearchParamValue(searchParams?.message)
+  let claimedTierNames: string[] = []
+  let personalRank: number | null = null
+
+  if (profileReady) {
+    const [claimedTiersResult, personalRankResult] = await Promise.all([
+      supabase
+        .from('tier_redemptions')
+        .select('tier_name')
+        .eq('user_id', user.id),
+      supabase
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .gt('total_points', currentPoints),
+    ])
+
+    if (!claimedTiersResult.error) {
+      claimedTierNames = ((claimedTiersResult.data ?? []) as Array<{ tier_name: string }>).map(
+        (row) => row.tier_name
+      )
+    } else if (!isMissingRelationError(claimedTiersResult.error)) {
+      setupMessage =
+        setupMessage ?? 'Tier redemption history is temporarily unavailable on the participant view.'
+    }
+
+    if (!personalRankResult.error) {
+      personalRank = (personalRankResult.count ?? 0) + 1
+    } else if (!isMissingRelationError(personalRankResult.error)) {
+      setupMessage = setupMessage ?? 'Personal rank is temporarily unavailable.'
+    }
+  }
+
   const initialTabParam = getSearchParamValue(searchParams?.tab)
   const initialTab =
     initialTabParam === 'my-submissions' || initialTabParam === 'leaderboard'
@@ -292,8 +336,12 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
       luckyDrawRules={luckyDrawRules}
       tasks={taskItems}
       tiers={giftTiers}
+      claimedTierNames={claimedTierNames}
       leaderboard={leaderboardItems}
       leaderboardReady={leaderboardReady}
+      personalRank={personalRank}
+      submissions={liveSubmissions}
+      isPortalOpen={isPortalOpen}
     />
   )
 }

@@ -202,6 +202,41 @@ export async function reviewRewardSubmission(formData: FormData) {
   )
 }
 
+export async function markTierRedemption(formData: FormData) {
+  const participantId = String(formData.get('participantId') ?? '').trim()
+  const tierName = String(formData.get('tierName') ?? '').trim()
+  const tierPointsRequired = Number(formData.get('tierPointsRequired') ?? 0)
+
+  if (!participantId || !tierName || !Number.isFinite(tierPointsRequired) || tierPointsRequired <= 0) {
+    redirectAdminMessage('Invalid tier redemption request.')
+  }
+
+  const { supabase, user } = await requireAdminRewardsUser('/rewards/admin')
+
+  const { error } = await supabase.from('tier_redemptions').insert({
+    user_id: participantId,
+    tier_name: tierName,
+    tier_points_required: tierPointsRequired,
+    redeemed_by: user.id,
+  })
+
+  if (error) {
+    if (error.code === '23505') {
+      redirectAdminMessage(`The ${tierName} reward has already been marked as claimed.`)
+    }
+
+    if (isMissingRelationError(error)) {
+      redirectAdminMessage('Tier redemption tracking requires the latest Supabase rewards schema.')
+    }
+
+    redirectAdminMessage('Could not record the tier redemption right now.')
+  }
+
+  revalidatePath('/rewards')
+  revalidatePath('/rewards/admin')
+  redirectAdminMessage(`${tierName} marked as claimed.`)
+}
+
 export async function recordManualAttendance(formData: FormData) {
   const email = String(formData.get('email') ?? '')
     .trim()
@@ -391,4 +426,117 @@ export async function runLuckyDraw(formData: FormData) {
   redirectAdminMessage(
     `Lucky draw winner selected: ${safeWinner.full_name ?? safeWinner.email ?? 'Participant'}.`
   )
+}
+
+export async function upsertRewardTask(formData: FormData) {
+  const taskId = String(formData.get('taskId') ?? '').trim()
+  const title = String(formData.get('title') ?? '').trim()
+  const description = String(formData.get('description') ?? '').trim()
+  const points = Number(formData.get('points') ?? 50)
+  const type = String(formData.get('type') ?? '').trim()
+  const requiresProof = formData.get('requiresProof') === 'on' || formData.get('requiresProof') === 'true'
+  const imageFileEntry = formData.get('imageFile')
+  const imageFile = isUploadableProofFile(imageFileEntry) ? imageFileEntry : null
+
+  if (!title || !type) {
+    redirectAdminMessage('Title and type are required.')
+  }
+
+  const { supabase } = await requireAdminRewardsUser('/rewards/admin')
+
+  let resolvedImageUrl: string | null = null
+
+  if (imageFile) {
+    if (!ALLOWED_PROOF_MIME_TYPES.has(imageFile.type)) {
+      redirectAdminMessage('Upload a PNG, JPG, WEBP, HEIC, or HEIF thumbnail file.')
+    }
+
+    if (imageFile.size > MAX_PROOF_FILE_SIZE_BYTES) {
+      redirectAdminMessage('Thumbnail uploads must be 6 MB or smaller.')
+    }
+
+    const fileExtension = getProofFileExtension(imageFile)
+    const storagePath = `tasks/${Date.now()}-${randomUUID()}.${fileExtension}`
+    const fileBuffer = new Uint8Array(await imageFile.arrayBuffer())
+
+    const { error: uploadError } = await supabase.storage.from('task-thumbnails').upload(storagePath, fileBuffer, {
+      contentType: imageFile.type,
+      cacheControl: '3600',
+      upsert: false,
+    })
+
+    if (uploadError) {
+      redirectAdminMessage('Could not upload the thumbnail.')
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('task-thumbnails').getPublicUrl(storagePath)
+
+    resolvedImageUrl = publicUrl
+  } else if (formData.get('removeImage') === 'true') {
+     resolvedImageUrl = '' // We will interpret empty string as "remove image"
+  }
+
+  const payload: any = {
+    title,
+    description: description || null,
+    points,
+    type,
+    requires_proof: requiresProof,
+  }
+
+  if (resolvedImageUrl === '') {
+    payload.image_url = null
+  } else if (resolvedImageUrl) {
+    payload.image_url = resolvedImageUrl
+  }
+
+  const { error } = await (taskId 
+    ? supabase.from('tasks').update(payload).eq('id', taskId)
+    : supabase.from('tasks').insert(payload))
+
+  if (error) {
+    redirectAdminMessage('Could not save the task.')
+  }
+
+  revalidatePath('/rewards')
+  revalidatePath('/rewards/admin')
+  redirectAdminMessage(taskId ? 'Task updated successfully.' : 'Task created successfully.')
+}
+
+export async function deleteRewardTask(formData: FormData) {
+  const taskId = String(formData.get('taskId') ?? '').trim()
+
+  if (!taskId) {
+    redirectAdminMessage('Invalid task ID.')
+  }
+
+  const { supabase } = await requireAdminRewardsUser('/rewards/admin')
+
+  const { error } = await supabase.from('tasks').delete().eq('id', taskId)
+
+  if (error) {
+    redirectAdminMessage('Could not delete the task. It might have existing submissions.')
+  }
+
+  revalidatePath('/rewards')
+  revalidatePath('/rewards/admin')
+  redirectAdminMessage('Task deleted successfully.')
+}
+
+export async function toggleRewardsPortalStatus(isOpen: boolean) {
+  const { supabase } = await requireAdminRewardsUser('/rewards/admin')
+
+  const { error } = await supabase
+    .from('site_settings')
+    .upsert({ key: 'rewards_portal_status', value: { is_open: isOpen }, updated_at: new Date().toISOString() })
+
+  if (error) {
+    redirectAdminMessage('Could not update the Rewards Portal status.')
+  }
+
+  revalidatePath('/rewards')
+  revalidatePath('/rewards/admin')
+  redirectAdminMessage(`Rewards Portal is now ${isOpen ? 'OPEN' : 'LOCKED'}.`)
 }

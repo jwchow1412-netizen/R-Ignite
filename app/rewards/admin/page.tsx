@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   attendanceCheckpoints,
+  giftTiers,
   luckyDrawMinimumPoints,
 } from '@/lib/rewards'
 import {
@@ -30,10 +31,13 @@ import {
 } from '@/lib/rewards-server'
 
 import {
+  markTierRedemption,
   recordManualAttendance,
   reviewRewardSubmission,
   runLuckyDraw,
 } from '../actions'
+import PortalStatusToggleClient from '@/components/PortalStatusToggleClient'
+import TaskManagementClient from '@/components/TaskManagementClient'
 
 export const metadata = {
   title: 'Rewards Admin | MASA Hackathon 2026: R-Ignite',
@@ -91,6 +95,16 @@ type EligibleParticipant = {
   is_checked_in: boolean
 }
 
+type RecentTierRedemption = {
+  id: string
+  tier_name: string
+  created_at: string
+  participant: {
+    full_name: string | null
+    email: string | null
+  } | null
+}
+
 function getValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value
 }
@@ -113,8 +127,12 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
     pendingSubmissionsResult,
     checkedInResult,
     eligibleParticipantsResult,
+    redeemableParticipantsResult,
     recentScansResult,
     recentDrawsResult,
+    recentRedemptionsResult,
+    tasksResult,
+    siteSettingsResult,
   ] = await Promise.all([
     supabase
       .from('submissions')
@@ -143,30 +161,59 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
       .order('created_at', { ascending: false })
       .limit(8),
     supabase
+      .from('profiles')
+      .select('id, full_name, email, total_points, is_checked_in')
+      .eq('is_checked_in', true)
+      .gte('total_points', giftTiers[0].pointsRequired)
+      .order('total_points', { ascending: false })
+      .limit(12),
+    supabase
       .from('lucky_draw_results')
       .select(
         'id, draw_label, winner_points, created_at, winner:profiles!lucky_draw_results_winner_id_fkey(full_name, email)'
       )
       .order('created_at', { ascending: false })
       .limit(5),
+    supabase
+      .from('tier_redemptions')
+      .select(
+        'id, tier_name, created_at, participant:profiles!tier_redemptions_user_id_fkey(full_name, email)'
+      )
+      .order('created_at', { ascending: false })
+      .limit(8),
+    supabase
+      .from('tasks')
+      .select('id, title, description, points, type, requires_proof, image_url')
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'rewards_portal_status')
+      .maybeSingle(),
   ])
 
   const schemaReady =
     !pendingSubmissionsResult.error ||
     !checkedInResult.error ||
     !eligibleParticipantsResult.error ||
+    !redeemableParticipantsResult.error ||
     !recentScansResult.error ||
-    !recentDrawsResult.error
+    !recentDrawsResult.error ||
+    !recentRedemptionsResult.error ||
+    !tasksResult.error
 
   const setupMessage =
     [
       pendingSubmissionsResult.error,
       checkedInResult.error,
       eligibleParticipantsResult.error,
+      redeemableParticipantsResult.error,
       recentScansResult.error,
       recentDrawsResult.error,
+      recentRedemptionsResult.error,
+      tasksResult.error,
     ].find((error) => error && isMissingRelationError(error)) != null
-      ? 'Admin tools need the latest rewards schema before moderation, attendance scans, and lucky draw history can go live.'
+      ? 'Admin tools need the latest rewards schema before moderation, attendance scans, lucky draw history, and tier redemption tracking can go live.'
       : null
 
   const pendingSubmissions = ((pendingSubmissionsResult.data ?? []) as Array<{
@@ -203,6 +250,7 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
   })) as PendingSubmissionRow[]
   const checkedInCount = checkedInResult.count ?? 0
   const eligibleParticipants = (eligibleParticipantsResult.data ?? []) as EligibleParticipant[]
+  const redeemableParticipants = (redeemableParticipantsResult.data ?? []) as EligibleParticipant[]
   const recentScans = ((recentScansResult.data ?? []) as Array<{
     id: string
     checkpoint_name: string
@@ -241,6 +289,60 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
     ...draw,
     winner: takeFirst(draw.winner),
   })) as LuckyDrawResultWithWinner[]
+  const recentRedemptions = ((recentRedemptionsResult.data ?? []) as Array<{
+    id: string
+    tier_name: string
+    created_at: string
+    participant:
+      | {
+          full_name: string | null
+          email: string | null
+        }
+      | {
+          full_name: string | null
+          email: string | null
+        }[]
+      | null
+  }>).map((redemption) => ({
+    ...redemption,
+    participant: takeFirst(redemption.participant),
+  })) as RecentTierRedemption[]
+
+  const tasks = (tasksResult.data ?? []) as any[]
+  const isPortalOpen = siteSettingsResult.data?.value?.is_open ?? true
+
+
+  let claimedTierRows: Array<{ user_id: string; tier_name: string }> = []
+  let claimedTierSetupMessage: string | null = null
+
+  if (redeemableParticipants.length > 0) {
+    const { data: claimedTierData, error: claimedTierError } = await supabase
+      .from('tier_redemptions')
+      .select('user_id, tier_name')
+      .in(
+        'user_id',
+        redeemableParticipants.map((participant) => participant.id)
+      )
+
+    if (claimedTierError) {
+      if (isMissingRelationError(claimedTierError)) {
+        claimedTierSetupMessage = 'Tier redemption tracking requires the latest rewards schema.'
+      } else {
+        claimedTierSetupMessage = 'Could not load current tier redemption records.'
+      }
+    } else {
+      claimedTierRows = (claimedTierData ?? []) as Array<{ user_id: string; tier_name: string }>
+    }
+  }
+
+  const claimedTiersByUser = new Map<string, Set<string>>()
+
+  for (const claimedTier of claimedTierRows) {
+    const existing = claimedTiersByUser.get(claimedTier.user_id) ?? new Set<string>()
+    existing.add(claimedTier.tier_name)
+    claimedTiersByUser.set(claimedTier.user_id, existing)
+  }
+
   const qrCards = await Promise.all(
     attendanceCheckpoints.map(async (checkpoint) => ({
       checkpoint,
@@ -332,6 +434,10 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
               </div>
             </div>
           </div>
+        </section>
+
+        <section className="mt-10">
+          <PortalStatusToggleClient isPortalOpen={isPortalOpen} />
         </section>
 
         <section className="mt-10 grid gap-6 xl:grid-cols-[1.25fr,0.75fr]">
@@ -444,6 +550,10 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
                 </Button>
               </form>
 
+              <p className="mt-3 text-sm text-[rgba(248,244,246,0.68)]">
+                Previous winners are excluded from new draws by default.
+              </p>
+
               <div className="mt-5 space-y-3">
                 {recentDraws.length > 0 ? (
                   recentDraws.map((result) => (
@@ -509,7 +619,117 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
                 )}
               </div>
             </div>
+
+            <div className="glass-panel p-6">
+              <div className="flex items-center gap-3">
+                <div className="rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.06)] p-3 text-white">
+                  <Gift className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm uppercase tracking-[0.16em] text-[rgba(248,244,246,0.58)]">
+                    Tier redemption
+                  </p>
+                  <h2 className="text-2xl text-white">Prevent duplicate merch claims</h2>
+                </div>
+              </div>
+
+              {claimedTierSetupMessage ? (
+                <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-[rgba(248,244,246,0.78)]">
+                  {claimedTierSetupMessage}
+                </div>
+              ) : (
+                <div className="mt-5 space-y-3">
+                  {redeemableParticipants.length > 0 ? (
+                    redeemableParticipants.map((participant) => {
+                      const claimedTiers = claimedTiersByUser.get(participant.id) ?? new Set<string>()
+
+                      return (
+                        <div
+                          key={participant.id}
+                          className="rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.03)] p-4"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <p className="text-base font-semibold text-white">
+                                {getDisplayName(participant.full_name, participant.email)}
+                              </p>
+                              <p className="mt-1 text-sm text-[rgba(248,244,246,0.68)]">
+                                {participant.total_points} pts · checked in
+                              </p>
+                            </div>
+                            <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-emerald-100">
+                              Eligible to redeem
+                            </span>
+                          </div>
+
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {giftTiers
+                              .filter((tier) => participant.total_points >= tier.pointsRequired)
+                              .map((tier) => {
+                                const alreadyClaimed = claimedTiers.has(tier.name)
+
+                                return alreadyClaimed ? (
+                                  <span
+                                    key={`${participant.id}-${tier.name}`}
+                                    className="inline-flex rounded-full border border-emerald-400/24 bg-emerald-400/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-emerald-100"
+                                  >
+                                    {tier.name} claimed
+                                  </span>
+                                ) : (
+                                  <form key={`${participant.id}-${tier.name}`} action={markTierRedemption}>
+                                    <input type="hidden" name="participantId" value={participant.id} />
+                                    <input type="hidden" name="tierName" value={tier.name} />
+                                    <input
+                                      type="hidden"
+                                      name="tierPointsRequired"
+                                      value={tier.pointsRequired}
+                                    />
+                                    <Button type="submit" size="sm" className="h-8 rounded-xl px-3 text-xs">
+                                      Mark {tier.name} claimed
+                                    </Button>
+                                  </form>
+                                )
+                              })}
+                          </div>
+                        </div>
+                      )
+                    })
+                  ) : (
+                    <div className="rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.03)] p-4 text-sm text-[rgba(248,244,246,0.72)]">
+                      No checked-in participants have unlocked a redemption tier yet.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="mt-5 space-y-3">
+                <p className="text-sm uppercase tracking-[0.16em] text-[rgba(248,244,246,0.58)]">
+                  Recent claimed tiers
+                </p>
+                {recentRedemptions.length > 0 ? (
+                  recentRedemptions.map((redemption) => (
+                    <div
+                      key={redemption.id}
+                      className="rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-3"
+                    >
+                      <p className="text-base font-semibold text-white">
+                        {getDisplayName(redemption.participant?.full_name, redemption.participant?.email)}
+                      </p>
+                      <p className="mt-1 text-sm text-[rgba(248,244,246,0.72)]">{redemption.tier_name}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.03)] p-4 text-sm text-[rgba(248,244,246,0.72)]">
+                    No tier redemptions have been recorded yet.
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
+        </section>
+
+        <section className="mt-10">
+          <TaskManagementClient tasks={tasks} />
         </section>
 
         <section className="mt-10 grid gap-6 xl:grid-cols-[1.15fr,0.85fr]">

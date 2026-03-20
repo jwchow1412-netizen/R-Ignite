@@ -65,6 +65,7 @@ create table if not exists public.tasks (
   points integer not null default 50,
   type text not null,
   requires_proof boolean default false not null,
+  image_url text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -74,6 +75,7 @@ alter table public.tasks
   add column if not exists points integer default 50 not null,
   add column if not exists type text,
   add column if not exists requires_proof boolean default false not null,
+  add column if not exists image_url text,
   add column if not exists created_at timestamp with time zone default timezone('utc'::text, now()) not null;
 
 alter table public.tasks enable row level security;
@@ -298,7 +300,44 @@ create policy "Admins can insert lucky draw results." on public.lucky_draw_resul
   for insert with check (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
 
 
--- 6. Storage bucket for proof uploads
+-- 6. Tier redemptions
+create table if not exists public.tier_redemptions (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references public.profiles(id) not null,
+  tier_name text not null,
+  tier_points_required integer not null,
+  redeemed_by uuid references public.profiles(id),
+  notes text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.tier_redemptions
+  add column if not exists user_id uuid references public.profiles(id),
+  add column if not exists tier_name text,
+  add column if not exists tier_points_required integer,
+  add column if not exists redeemed_by uuid references public.profiles(id),
+  add column if not exists notes text,
+  add column if not exists created_at timestamp with time zone default timezone('utc'::text, now()) not null;
+
+create unique index if not exists tier_redemptions_user_tier_unique_idx
+  on public.tier_redemptions (user_id, tier_name);
+
+alter table public.tier_redemptions enable row level security;
+
+drop policy if exists "Users can view own tier redemptions." on public.tier_redemptions;
+create policy "Users can view own tier redemptions." on public.tier_redemptions
+  for select using (auth.uid() = user_id);
+
+drop policy if exists "Admins can view all tier redemptions." on public.tier_redemptions;
+create policy "Admins can view all tier redemptions." on public.tier_redemptions
+  for select using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+drop policy if exists "Admins can insert tier redemptions." on public.tier_redemptions;
+create policy "Admins can insert tier redemptions." on public.tier_redemptions
+  for insert with check (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+
+-- 7. Storage bucket for proof uploads
 insert into storage.buckets (id, name, public)
 values ('proofs', 'proofs', true)
 on conflict (id) do update
@@ -314,3 +353,56 @@ drop policy if exists "Anyone can view proofs." on storage.objects;
 create policy "Anyone can view proofs."
   on storage.objects for select
   using (bucket_id = 'proofs');
+
+-- 7. Storage bucket for task thumbnails
+insert into storage.buckets (id, name, public)
+values ('task-thumbnails', 'task-thumbnails', true)
+on conflict (id) do update
+  set name = excluded.name,
+      public = excluded.public;
+
+drop policy if exists "Admins can upload task thumbnails." on storage.objects;
+create policy "Admins can upload task thumbnails."
+  on storage.objects for insert
+  with check (bucket_id = 'task-thumbnails' and exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+drop policy if exists "Admins can update task thumbnails." on storage.objects;
+create policy "Admins can update task thumbnails."
+  on storage.objects for update
+  using (bucket_id = 'task-thumbnails' and exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+drop policy if exists "Admins can delete task thumbnails." on storage.objects;
+create policy "Admins can delete task thumbnails."
+  on storage.objects for delete
+  using (bucket_id = 'task-thumbnails' and exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+drop policy if exists "Anyone can view task thumbnails." on storage.objects;
+create policy "Anyone can view task thumbnails."
+  on storage.objects for select
+  using (bucket_id = 'task-thumbnails');
+
+-- 8. Site Settings
+create table if not exists public.site_settings (
+  key text primary key,
+  value jsonb not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+insert into public.site_settings (key, value) values ('rewards_portal_status', '{"is_open": true}') on conflict (key) do nothing;
+
+alter table public.site_settings enable row level security;
+
+drop policy if exists "Anyone can read site settings." on public.site_settings;
+create policy "Anyone can read site settings."
+  on public.site_settings for select
+  using (true);
+
+drop policy if exists "Admins can update site settings." on public.site_settings;
+create policy "Admins can update site settings."
+  on public.site_settings for update
+  using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+drop policy if exists "Admins can insert site settings." on public.site_settings;
+create policy "Admins can insert site settings."
+  on public.site_settings for insert
+  with check (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));

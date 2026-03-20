@@ -1,23 +1,27 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowUpRight,
   BadgeCheck,
   Clock3,
   Gift,
+  Lock,
   QrCode,
   ShieldCheck,
   Sparkles,
   Trophy,
   Users,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 
 import RewardsProofModal from '@/components/RewardsProofModal'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { createClient } from '@/utils/supabase/client'
 
 type RewardsTabId = 'earn-points' | 'my-submissions' | 'leaderboard'
 
@@ -34,6 +38,7 @@ type RewardsPortalTaskItem = {
   source: 'live' | 'fallback'
   status: 'pending' | 'approved' | 'rejected' | 'not-started' | 'planned'
   proofUrl: string | null
+  imageUrl: string | null
 }
 
 type RewardsPortalLeaderboardItem = {
@@ -72,8 +77,11 @@ type RewardsPortalClientProps = {
   luckyDrawRules: string[]
   tasks: RewardsPortalTaskItem[]
   tiers: RewardsPortalTierItem[]
+  claimedTierNames: string[]
   leaderboard: RewardsPortalLeaderboardItem[]
   leaderboardReady: boolean
+  personalRank: number | null
+  isPortalOpen?: boolean
 }
 
 const tabs: { id: RewardsTabId; label: string }[] = [
@@ -158,9 +166,13 @@ export default function RewardsPortalClient({
   luckyDrawRules,
   tasks,
   tiers,
+  claimedTierNames,
   leaderboard,
   leaderboardReady,
+  personalRank,
+  isPortalOpen = true,
 }: RewardsPortalClientProps) {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<RewardsTabId>(initialTab)
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
   const [pointsDelta, setPointsDelta] = useState<number | null>(null)
@@ -189,13 +201,101 @@ export default function RewardsPortalClient({
     window.localStorage.setItem(storageKey, String(currentPoints))
   }, [currentPoints, userId])
 
+  useEffect(() => {
+    const supabase = createClient()
+    let refreshTimeoutId: number | null = null
+
+    const scheduleRefresh = () => {
+      if (refreshTimeoutId) {
+        window.clearTimeout(refreshTimeoutId)
+      }
+
+      refreshTimeoutId = window.setTimeout(() => {
+        startTransition(() => {
+          router.refresh()
+        })
+      }, 220)
+    }
+
+    const channel = supabase
+      .channel(`rewards-portal-${userId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, scheduleRefresh)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'submissions', filter: `user_id=eq.${userId}` },
+        scheduleRefresh
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'tier_redemptions', filter: `user_id=eq.${userId}` },
+        scheduleRefresh
+      )
+      .subscribe()
+
+    return () => {
+      if (refreshTimeoutId) {
+        window.clearTimeout(refreshTimeoutId)
+      }
+
+      void supabase.removeChannel(channel)
+    }
+  }, [router, userId])
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.channel('public:tasks').on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => {
+      router.refresh()
+    }).subscribe()
+  }, [])
+
+  if (!isPortalOpen) {
+    return (
+      <div className="relative flex min-h-[calc(100vh-140px)] items-center justify-center overflow-hidden px-4">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[320px] bg-[radial-gradient(circle_at_top_left,rgba(212,100,118,0.22),transparent_34%),radial-gradient(circle_at_top_right,rgba(71,140,255,0.12),transparent_24%)]" />
+
+        <motion.div
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: "spring", bounce: 0.4, duration: 0.8 }}
+          className="relative z-10 w-full max-w-2xl overflow-hidden rounded-2xl border border-red-500/30 bg-[#1a0f12] p-8 text-center shadow-2xl md:p-12"
+        >
+          <motion.div
+             animate={{ rotate: [-5, 5, -5] }}
+             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+             className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-500/10 text-red-500 ring-4 ring-red-500/20"
+          >
+            <Lock className="h-10 w-10" />
+          </motion.div>
+          <p className="mb-3 text-3xl font-bold tracking-tight text-white">Rewards Portal Locked</p>
+          <p className="mx-auto max-w-lg text-[15px] leading-relaxed text-[rgba(248,244,246,0.7)]">
+            The organisers have temporarily paused the Rewards Portal. Submissions, points, and the leaderboard are currently hidden.
+            <br/><br/>
+            Check Discord for updates on when the portal will formally reopen!
+          </p>
+
+          {isAdmin && (
+             <div className="mt-8">
+               <Button asChild variant="outline" className="border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-red-400">
+                 <Link href="/rewards/admin">Unlock in Admin Panel</Link>
+               </Button>
+             </div>
+          )}
+
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(239,68,68,0.15),transparent_70%)]" />
+        </motion.div>
+      </div>
+    )
+  }
+
   const selectedTask = tasks.find((task) => task.id === selectedTaskId) ?? null
   const submissions = tasks.filter((task) =>
     ['pending', 'approved', 'rejected'].includes(task.status)
   )
+  const isUserInTopFive = leaderboard.some((entry) => entry.id === userId)
 
   return (
     <div className="relative overflow-hidden">
+      {/* Background gradients */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[320px] bg-[radial-gradient(circle_at_top_left,rgba(212,100,118,0.22),transparent_34%),radial-gradient(circle_at_top_right,rgba(71,140,255,0.12),transparent_24%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
@@ -328,6 +428,11 @@ export default function RewardsPortalClient({
                   <Link href="/rewards/admin">Admin Panel</Link>
                 </Button>
               ) : null}
+              <Button asChild size="sm" className="bg-[#d46476] text-white hover:bg-[#b05261]">
+                          <Link href={isPortalOpen ? "/rewards/check-in" : "#"} className={!isPortalOpen ? "pointer-events-none opacity-50" : ""}>
+                            {isPortalOpen ? "Scan QR to Check In" : "Portal Locked"}
+                          </Link>
+                        </Button>
               <div className="flex flex-1 items-center rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-[rgba(248,244,246,0.66)] xl:flex-none">
                 Compact rewards control surface
               </div>
@@ -402,6 +507,11 @@ export default function RewardsPortalClient({
                         <tr key={task.id} className="align-top">
                           <td className="px-3 py-2.5">
                             <div className="flex items-start gap-3">
+                              {task.imageUrl && (
+                                <div className="relative mt-0.5 hidden h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-white/10 sm:block">
+                                  <Image src={task.imageUrl} alt={task.title} fill className="object-cover" unoptimized={task.imageUrl.includes('supabase')} />
+                                </div>
+                              )}
                               <div className="rounded-xl border border-white/10 bg-white/5 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.62)]">
                                 {getTypeLabel(task.type)}
                               </div>
@@ -457,8 +567,9 @@ export default function RewardsPortalClient({
                                 size="sm"
                                 className="h-8 rounded-xl px-3 text-xs"
                                 onClick={() => setSelectedTaskId(task.id)}
+                                disabled={!isPortalOpen}
                               >
-                                {task.proofUrl ? 'Update proof' : 'Submit proof'}
+                                {isPortalOpen ? (task.proofUrl ? 'Update proof' : 'Submit proof') : 'Locked'}
                               </Button>
                             ) : task.requiresProof ? (
                               <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[rgba(248,244,246,0.56)]">
@@ -530,8 +641,9 @@ export default function RewardsPortalClient({
                                 size="sm"
                                 className="h-8 rounded-xl px-3 text-xs"
                                 onClick={() => setSelectedTaskId(submission.id)}
+                                disabled={!isPortalOpen}
                               >
-                                Update
+                                {isPortalOpen ? 'Update' : 'Locked'}
                               </Button>
                             ) : null}
                           </div>
@@ -562,40 +674,50 @@ export default function RewardsPortalClient({
                 </div>
 
                 {leaderboardReady && leaderboard.length > 0 ? (
-                  <div className="overflow-hidden rounded-[18px] border border-white/10">
-                    <table className="w-full">
-                      <thead className="bg-[rgba(255,255,255,0.03)]">
-                        <tr className="text-[10px] uppercase tracking-[0.18em] text-[rgba(248,244,246,0.45)]">
-                          <th className="px-3 py-2 text-left font-medium">Rank</th>
-                          <th className="px-3 py-2 text-left font-medium">Participant</th>
-                          <th className="px-3 py-2 text-left font-medium">Attendance</th>
-                          <th className="px-3 py-2 text-right font-medium">Points</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-white/8">
-                        {leaderboard.map((entry, index) => (
-                          <tr key={entry.id}>
-                            <td className="px-3 py-2.5 text-sm font-semibold text-white">#{index + 1}</td>
-                            <td className="px-3 py-2.5 text-sm text-white">{entry.displayName}</td>
-                            <td className="px-3 py-2.5">
-                              <span
-                                className={cn(
-                                  'inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]',
-                                  entry.isCheckedIn
-                                    ? 'border-emerald-400/24 bg-emerald-400/10 text-emerald-100'
-                                    : 'border-white/12 bg-white/5 text-[rgba(248,244,246,0.66)]'
-                                )}
-                              >
-                                {entry.isCheckedIn ? 'Checked in' : 'Not checked in'}
-                              </span>
-                            </td>
-                            <td className="px-3 py-2.5 text-right text-base font-semibold text-white">
-                              {entry.totalPoints}
-                            </td>
+                  <div className="space-y-3">
+                    <div className="overflow-hidden rounded-[18px] border border-white/10">
+                      <table className="w-full">
+                        <thead className="bg-[rgba(255,255,255,0.03)]">
+                          <tr className="text-[10px] uppercase tracking-[0.18em] text-[rgba(248,244,246,0.45)]">
+                            <th className="px-3 py-2 text-left font-medium">Rank</th>
+                            <th className="px-3 py-2 text-left font-medium">Participant</th>
+                            <th className="px-3 py-2 text-left font-medium">Attendance</th>
+                            <th className="px-3 py-2 text-right font-medium">Points</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="divide-y divide-white/8">
+                          {leaderboard.map((entry, index) => (
+                            <tr key={entry.id}>
+                              <td className="px-3 py-2.5 text-sm font-semibold text-white">#{index + 1}</td>
+                              <td className="px-3 py-2.5 text-sm text-white">{entry.displayName}</td>
+                              <td className="px-3 py-2.5">
+                                <span
+                                  className={cn(
+                                    'inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]',
+                                    entry.isCheckedIn
+                                      ? 'border-emerald-400/24 bg-emerald-400/10 text-emerald-100'
+                                      : 'border-white/12 bg-white/5 text-[rgba(248,244,246,0.66)]'
+                                  )}
+                                >
+                                  {entry.isCheckedIn ? 'Checked in' : 'Not checked in'}
+                                </span>
+                              </td>
+                              <td className="px-3 py-2.5 text-right text-base font-semibold text-white">
+                                {entry.totalPoints}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {personalRank ? (
+                      <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-3 text-sm text-[rgba(248,244,246,0.76)]">
+                        {isUserInTopFive
+                          ? `You are currently in the top 5 at rank #${personalRank}.`
+                          : `Your current personal rank is #${personalRank}.`}
+                      </div>
+                    ) : null}
                   </div>
                 ) : (
                   <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-5 text-sm text-[rgba(248,244,246,0.72)]">
@@ -623,6 +745,7 @@ export default function RewardsPortalClient({
               <div className="mt-3 space-y-2">
                 {tiers.map((tier) => {
                   const unlocked = currentPoints >= tier.pointsRequired
+                  const claimed = claimedTierNames.includes(tier.name)
 
                   return (
                     <div
@@ -646,10 +769,16 @@ export default function RewardsPortalClient({
                         <span
                           className={cn(
                             'shrink-0 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.16em]',
-                            getTierPillTone(unlocked)
+                            claimed
+                              ? 'border-sky-400/24 bg-sky-400/10 text-sky-100'
+                              : getTierPillTone(unlocked)
                           )}
                         >
-                          {unlocked ? 'Unlocked' : `${Math.max(tier.pointsRequired - currentPoints, 0)} left`}
+                          {claimed
+                            ? 'Claimed'
+                            : unlocked
+                              ? 'Unlocked'
+                              : `${Math.max(tier.pointsRequired - currentPoints, 0)} left`}
                         </span>
                       </div>
                     </div>
