@@ -32,7 +32,7 @@ const linkIsActive = (pathname: string, href: string) => {
   return pathname.startsWith(href);
 };
 
-export default function Navbar({ user, isAdmin = false }: { user: User | null; isAdmin?: boolean }) {
+export default function Navbar({ user }: { user: User | null }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [peopleOpen, setPeopleOpen] = useState(false);

@@ -308,7 +308,15 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
     participant: takeFirst(redemption.participant),
   })) as RecentTierRedemption[]
 
-  const tasks = (tasksResult.data ?? []) as any[]
+  const tasks = (tasksResult.data ?? []) as Array<{
+    id: string
+    title: string
+    description: string | null
+    points: number
+    type: string
+    requires_proof: boolean
+    image_url: string | null
+  }>
   const isPortalOpen = siteSettingsResult.data?.value?.is_open ?? true
 
 

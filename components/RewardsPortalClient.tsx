@@ -243,10 +243,14 @@ export default function RewardsPortalClient({
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.channel('public:tasks').on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => {
+    const channel = supabase.channel('public:tasks').on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => {
       router.refresh()
     }).subscribe()
-  }, [])
+
+    return () => {
+      void supabase.removeChannel(channel)
+    }
+  }, [router])
 
   if (!isPortalOpen) {
     return (

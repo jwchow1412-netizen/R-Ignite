@@ -478,7 +478,14 @@ export async function upsertRewardTask(formData: FormData) {
      resolvedImageUrl = '' // We will interpret empty string as "remove image"
   }
 
-  const payload: any = {
+  const payload: {
+    title: string
+    description: string | null
+    points: number
+    type: string
+    requires_proof: boolean
+    image_url?: string | null
+  } = {
     title,
     description: description || null,
     points,
