@@ -56,7 +56,7 @@ export async function getTeamSubmissionHistory(teamName: string): Promise<{ succ
         history.reverse();
 
         return { success: true, data: history };
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("History Fetch Error:", error);
         return { success: false, error: "An unexpected error occurred while fetching history." };
     }

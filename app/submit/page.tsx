@@ -41,7 +41,7 @@ export default function SubmitPage() {
       <div className="mb-4 text-center space-y-2 max-w-2xl mx-auto">
         <h1 className="text-4xl font-bold text-white md:text-5xl">Hackathon Submission</h1>
         <p className="text-[rgba(248,244,246,0.7)]">
-          Submit your team's preliminary round deliverable. Please ensure your report is in PDF format and does not exceed 100MB.
+          Submit your team&apos;s preliminary round deliverable. Please ensure your report is in PDF format and does not exceed 100MB.
         </p>
       </div>
 

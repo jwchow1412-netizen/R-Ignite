@@ -66,7 +66,7 @@ export default function SubmissionForm() {
         e.target.value = '';
         return;
       }
-      for (let file of files) {
+      for (const file of files) {
         if (file.size > MAX_FILE_SIZE) {
           alert(`File ${file.name} is over 50MB limit`);
           e.target.value = '';
@@ -82,7 +82,7 @@ export default function SubmissionForm() {
     const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
     
     // We assume the bucket name is 'submissions' and RLS is configured to accept authenticated/anon uploads
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('submissions')
       .upload(fileName, file, { cacheControl: '3600', upsert: false });
 
@@ -135,9 +135,9 @@ export default function SubmissionForm() {
       }
 
       setSubmitStatus("success");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      setErrorMessage(error.message || "Failed to submit. Please try again.");
+      setErrorMessage(error instanceof Error ? error.message : "Failed to submit. Please try again.");
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -183,7 +183,7 @@ export default function SubmissionForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="members">Other Members' Names & Emails (Separated by commas) <span className="text-red-500">*</span></Label>
+              <Label htmlFor="members">Other Members&apos; Names & Emails (Separated by commas) <span className="text-red-500">*</span></Label>
               <textarea id="members" className="flex min-h-[80px] w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-50" placeholder="Member 2 Name (Email), Member 3 Name (Email)..." {...register("members")} />
               {errors.members && <p className="text-red-500 text-sm">{errors.members.message}</p>}
             </div>
@@ -216,7 +216,7 @@ export default function SubmissionForm() {
             
             <div className="space-y-2">
               <Label htmlFor="usedAI">Artificial Intelligence Tools (Rule 7.1) <span className="text-red-500">*</span></Label>
-              <p className="text-xs text-zinc-400 mb-2">Did your team use AI tools (e.g., ChatGPT, Copilot)? If yes, specify how. If no, write "No".</p>
+              <p className="text-xs text-zinc-400 mb-2">Did your team use AI tools (e.g., ChatGPT, Copilot)? If yes, specify how. If no, write &quot;No&quot;.</p>
               <textarea id="usedAI" className="flex min-h-[60px] w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400" {...register("usedAI")} />
               {errors.usedAI && <p className="text-red-500 text-sm">{errors.usedAI.message}</p>}
             </div>
@@ -265,7 +265,7 @@ function SuccessView({ teamName }: { teamName: string }) {
         } else {
           setHistory([]);
         }
-      } catch (error) {
+      } catch {
         setHistory([]);
       } finally {
         setLoading(false);
@@ -286,7 +286,7 @@ function SuccessView({ teamName }: { teamName: string }) {
         <p className="text-sm">Please check your email shortly. If you submitted multiple times, only the latest valid submission before the deadline counts.</p>
         
         <div className="space-y-3 mt-6">
-          <h3 className="text-lg font-semibold border-b border-zinc-800 pb-2">Submission History for "{teamName}"</h3>
+          <h3 className="text-lg font-semibold border-b border-zinc-800 pb-2">Submission History for &quot;{teamName}&quot;</h3>
           
           {loading ? (
             <div className="flex items-center justify-center p-8 text-zinc-500">

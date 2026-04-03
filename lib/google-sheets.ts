@@ -31,9 +31,9 @@ export async function appendRowToSheet(values: string[], range: string = "Sheet1
         });
 
         return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Google Sheets API Error:", error);
-        return { success: false, error: error.message || "API Error" };
+        return { success: false, error: error instanceof Error ? error.message : "API Error" };
     }
 }
 
@@ -65,8 +65,8 @@ export async function getRowsFromSheet(range: string = "Sheet1!A:Z") {
 
         const rows = response.data.values || [];
         return { success: true, data: rows };
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Google Sheets API Read Error:", error);
-        return { success: false, data: [], error: error.message || "API Error" };
+        return { success: false, data: [], error: error instanceof Error ? error.message : "API Error" };
     }
 }
