@@ -6,9 +6,9 @@ export const metadata = {
 
 const resources = [
   {
-    title: "Participant Handbook",
-    href: "/downloads/handbook.pdf",
-    description: "Competition overview and guidance.",
+    title: "Rules & Regulations (R&R)",
+    href: "https://drive.google.com/file/d/1z6vmkkp9G7tRv9I1-Prd0tekPUpH7r-C/view?usp=sharing",
+    description: "Competition overview, rules and guidance.",
   },
   {
     title: "Problem Statement",
@@ -24,9 +24,8 @@ const resources = [
   },
   {
     title: "Terms & Conditions",
-    href: "/downloads/terms-and-conditions.pdf",
+    href: "https://drive.google.com/file/d/13VjUxeAlJNu46hBcpgBxLGzZ8bTsH_b-/view?usp=share_link",
     description: "Participant obligations and policies.",
-    comingSoon: true,
   },
 ];
 

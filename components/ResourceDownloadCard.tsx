@@ -36,8 +36,8 @@ export default function ResourceDownloadCard({
         {comingSoon ? (
           <span>Coming Soon</span>
         ) : (
-          <Link href={href} download>
-            Download
+          <Link href={href} target="_blank" rel="noopener noreferrer">
+            {href.includes("drive.google.com") ? "View" : "Download"}
           </Link>
         )}
       </Button>

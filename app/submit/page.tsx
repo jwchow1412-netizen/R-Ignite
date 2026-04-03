@@ -10,7 +10,31 @@ export default function SubmitPage() {
   // Check the current deadline
   // May 7th, 2026 at 11:59 PM GMT+8
   const deadline = new Date("2026-05-07T23:59:00+08:00");
+  const openingTime = new Date("2026-04-25T12:00:00+08:00");
   const now = new Date();
+
+  // If we haven't reached the opening time yet
+  if (now < openingTime) {
+    return (
+      <div className="flex min-h-[90vh] flex-col items-center justify-center py-12 px-4 relative z-10">
+        <div className="mb-8 text-center space-y-2">
+          <h1 className="text-4xl font-bold text-white md:text-5xl">Submissions Closed</h1>
+        </div>
+
+        <Card className="w-full max-w-lg border-[rgba(212,100,118,0.2)] bg-black/40 backdrop-blur-xl">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl text-yellow-500">Opens Soon</CardTitle>
+            <CardDescription className="text-zinc-300 mt-2">
+              The preliminary round submission window opens on 25th April 2026 at 12:00 p.m. Malaysia Time.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center mt-4">
+            <a href="/" className="px-6 py-2 bg-accent text-white rounded-md hover:bg-accent/80 transition-colors">Return Home</a>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // If we are past the deadline
   if (now > deadline) {
