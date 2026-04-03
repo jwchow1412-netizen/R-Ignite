@@ -140,6 +140,12 @@ export default function Navbar({ user }: { user: User | null }) {
                 Register
               </Link>
             </Button>
+
+            <Button asChild className="bg-[#10B981] hover:bg-[#059669] text-white px-3 ml-2">
+              <Link href="/submit">
+                Submit Entry
+              </Link>
+            </Button>
           </div>
         </nav>
 
@@ -215,6 +221,15 @@ export default function Navbar({ user }: { user: User | null }) {
               >
                 <Link href="https://docs.google.com/forms/d/e/1FAIpQLSfTOyeH4B4OYs_yuLv7MEi5EgzXpWTqX1KCSRBz6u-yKUlWPg/viewform?usp=sharing&ouid=106110738148825842904" target="_blank" rel="noopener noreferrer">
                   Register
+                </Link>
+              </Button>
+              <Button
+                asChild
+                className="flex-1 justify-center bg-[#10B981] hover:bg-[#059669] text-white"
+                onClick={() => setMobileOpen(false)}
+              >
+                <Link href="/submit">
+                  Submit
                 </Link>
               </Button>
             </div>
