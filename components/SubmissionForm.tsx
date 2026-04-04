@@ -27,7 +27,19 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function SubmissionForm() {
+export type SubmissionLabels = {
+  teamName?: string;
+  leaderName?: string;
+  leaderEmail?: string;
+  members?: string;
+  universities?: string;
+  report?: string;
+  appendix?: string;
+  usedAI?: string;
+  agreed?: string;
+};
+
+export default function SubmissionForm({ previewMode = false, labels = {} }: { previewMode?: boolean, labels?: SubmissionLabels }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reportFile, setReportFile] = useState<File | null>(null);
   const [appendixFiles, setAppendixFiles] = useState<File[]>([]);
@@ -95,6 +107,11 @@ export default function SubmissionForm() {
   };
 
   const onSubmit = async (data: FormValues) => {
+    if (previewMode) {
+      alert("Preview Mode: Actual submission is disabled.");
+      return;
+    }
+
     if (!reportFile) {
       setErrorMessage("Report file is required.");
       return;
@@ -164,32 +181,32 @@ export default function SubmissionForm() {
             <h3 className="text-lg font-semibold border-b border-zinc-800 pb-2">1. Team Details</h3>
             
             <div className="space-y-2">
-              <Label htmlFor="teamName">Team Name <span className="text-red-500">*</span></Label>
+              <Label htmlFor="teamName">{labels.teamName || "Team Name"} <span className="text-red-500">*</span></Label>
               <Input id="teamName" className="bg-zinc-950 border-zinc-800" placeholder="Max 30 characters" {...register("teamName")} />
               {errors.teamName && <p className="text-red-500 text-sm">{errors.teamName.message}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="leaderName">Team Leader Full Name <span className="text-red-500">*</span></Label>
+                <Label htmlFor="leaderName">{labels.leaderName || "Team Leader Full Name"} <span className="text-red-500">*</span></Label>
                 <Input id="leaderName" className="bg-zinc-950 border-zinc-800" {...register("leaderName")} />
                 {errors.leaderName && <p className="text-red-500 text-sm">{errors.leaderName.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="leaderEmail">Leader Email <span className="text-red-500">*</span></Label>
+                <Label htmlFor="leaderEmail">{labels.leaderEmail || "Leader Email"} <span className="text-red-500">*</span></Label>
                 <Input id="leaderEmail" type="email" className="bg-zinc-950 border-zinc-800" {...register("leaderEmail")} />
                 {errors.leaderEmail && <p className="text-red-500 text-sm">{errors.leaderEmail.message}</p>}
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="members">Other Members&apos; Names & Emails (Separated by commas) <span className="text-red-500">*</span></Label>
+              <Label htmlFor="members">{labels.members || "Other Members' Names & Emails (Separated by commas)"} <span className="text-red-500">*</span></Label>
               <textarea id="members" className="flex min-h-[80px] w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-50" placeholder="Member 2 Name (Email), Member 3 Name (Email)..." {...register("members")} />
               {errors.members && <p className="text-red-500 text-sm">{errors.members.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="universities">University Name(s) <span className="text-red-500">*</span></Label>
+              <Label htmlFor="universities">{labels.universities || "University Name(s)"} <span className="text-red-500">*</span></Label>
               <Input id="universities" className="bg-zinc-950 border-zinc-800" placeholder="E.g., University of Malaya, Monash University" {...register("universities")} />
               {errors.universities && <p className="text-red-500 text-sm">{errors.universities.message}</p>}
             </div>
@@ -199,13 +216,13 @@ export default function SubmissionForm() {
             <h3 className="text-lg font-semibold border-b border-zinc-800 pb-2">2. Deliverables</h3>
             
             <div className="space-y-2 border border-zinc-800 p-4 rounded-lg bg-zinc-950/50">
-              <Label htmlFor="report">Main Hackathon Report (PDF) <span className="text-red-500">*</span></Label>
+              <Label htmlFor="report">{labels.report || "Main Hackathon Report (PDF)"} <span className="text-red-500">*</span></Label>
               <p className="text-xs text-zinc-400 mb-2">Max 10 pages for main body. Must be PDF format, max 50MB.</p>
               <Input id="report" type="file" accept=".pdf" className="bg-zinc-900 border-zinc-800" onChange={handleReportChange} required />
             </div>
 
             <div className="space-y-2 border border-zinc-800 p-4 rounded-lg bg-zinc-950/50">
-              <Label htmlFor="appendix">Appendices / Supporting Docs (Optional)</Label>
+              <Label htmlFor="appendix">{labels.appendix || "Appendices / Supporting Docs (Optional)"}</Label>
               <p className="text-xs text-zinc-400 mb-2">Max 3 files allowed, up to 50MB each. Code, datasets, visuals.</p>
               <Input id="appendix" type="file" multiple className="bg-zinc-900 border-zinc-800" onChange={handleAppendixChange} />
             </div>
@@ -215,7 +232,7 @@ export default function SubmissionForm() {
             <h3 className="text-lg font-semibold border-b border-zinc-800 pb-2">3. Declarations</h3>
             
             <div className="space-y-2">
-              <Label htmlFor="usedAI">Artificial Intelligence Tools (Rule 7.1) <span className="text-red-500">*</span></Label>
+              <Label htmlFor="usedAI">{labels.usedAI || "Artificial Intelligence Tools (Rule 7.1)"} <span className="text-red-500">*</span></Label>
               <p className="text-xs text-zinc-400 mb-2">Did your team use AI tools (e.g., ChatGPT, Copilot)? If yes, specify how. If no, write &quot;No&quot;.</p>
               <textarea id="usedAI" className="flex min-h-[60px] w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400" {...register("usedAI")} />
               {errors.usedAI && <p className="text-red-500 text-sm">{errors.usedAI.message}</p>}
@@ -224,7 +241,7 @@ export default function SubmissionForm() {
             <div className="flex items-start space-x-2 pt-2">
               <input type="checkbox" id="agreed" className="mt-1" {...register("agreed")} />
               <div className="space-y-1 leading-none">
-                <Label htmlFor="agreed" className="text-sm cursor-pointer">I verify this submission is our original work and agree to the MASA T&C and Official Rules.</Label>
+                <Label htmlFor="agreed" className="text-sm cursor-pointer">{labels.agreed || "I verify this submission is our original work and agree to the MASA T&C and Official Rules."}</Label>
                 {errors.agreed && <p className="text-red-500 text-xs mt-1">{errors.agreed.message}</p>}
               </div>
             </div>
