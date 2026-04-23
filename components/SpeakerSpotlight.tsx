@@ -93,7 +93,7 @@ export default function SpeakerSpotlight({ speaker }: { speaker: Speaker }) {
               {speaker.bio && (
                 <div className="space-y-5 text-left text-[rgba(248,244,246,0.8)] text-lg leading-relaxed relative">
                   {/* Decorative quote mark */}
-                  <div className="absolute -top-6 -left-6 text-6xl text-white/5 font-serif select-none">"</div>
+                  <div className="absolute -top-6 -left-6 text-6xl text-white/5 font-serif select-none">&quot;</div>
                   
                   {speaker.bio.split('\n\n').map((paragraph, i) => (
                     <motion.p 

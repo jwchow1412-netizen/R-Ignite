@@ -102,7 +102,7 @@ export default function ItineraryTabs() {
               </div>
               <ul className="space-y-3">
                 {/* Type any since lib/data might not have duration explicitly typed if it's inferred, but it's fine */}
-                {grandFinalSchedule.map((slot: any, i) => (
+                {grandFinalSchedule.map((slot: { time: string; item: string; duration?: string }, i) => (
                   <motion.li 
                     key={slot.time + i}
                     initial={{ opacity: 0, x: -10 }}

@@ -39,8 +39,8 @@ export default function ForumAdminClient({ initialPosts, adminName }: { initialP
         setTags("");
         // Hide success message after 3 seconds
         setTimeout(() => setSuccessMsg(""), 3000);
-      } catch (err: any) {
-        alert(err.message);
+      } catch (err: unknown) {
+        alert((err as Error).message);
       }
     });
   };
@@ -51,8 +51,8 @@ export default function ForumAdminClient({ initialPosts, adminName }: { initialP
         try {
             await deleteForumPost(id);
             if (editingId === id) cancelEdit();
-        } catch (err: any) {
-            alert(err.message);
+        } catch (err: unknown) {
+            alert((err as Error).message);
         }
     });
   };

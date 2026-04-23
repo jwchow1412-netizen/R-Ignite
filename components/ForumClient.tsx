@@ -78,7 +78,7 @@ export default function ForumClient({
       startTransition(async () => {
           try {
               await addComment(postId, text);
-          } catch(err: any) {
+          } catch {
               alert("Failed to add comment. Please log in first.");
           }
       });
@@ -90,8 +90,8 @@ export default function ForumClient({
       startTransition(async () => {
           try {
               await deleteComment(commentId);
-          } catch(err: any) {
-              alert(err.message);
+          } catch(err: unknown) {
+              alert((err as Error).message);
           }
       });
   };
@@ -306,9 +306,9 @@ export default function ForumClient({
                                     )}
                                     
                                     {/* Secondary Action */}
-                                    {(item as any).secondaryLinkText && (item as any).secondaryEmbedLink && (
-                                        <Link href={(item as any).secondaryEmbedLink} target="_blank" className="border border-white/20 text-white/70 hover:bg-white/10 hover:text-white font-black text-xs uppercase tracking-widest px-6 py-3 transition-colors block text-center min-w-[150px]">
-                                            {(item as any).secondaryLinkText} <span className="ml-2 font-mono">→</span>
+                                    {(item as Record<string, string|boolean|undefined>).secondaryLinkText && (item as Record<string, string|boolean|undefined>).secondaryEmbedLink && (
+                                        <Link href={(item as Record<string, string|boolean|undefined>).secondaryEmbedLink as string} target="_blank" className="border border-white/20 text-white/70 hover:bg-white/10 hover:text-white font-black text-xs uppercase tracking-widest px-6 py-3 transition-colors block text-center min-w-[150px]">
+                                            {(item as Record<string, string|boolean|undefined>).secondaryLinkText as string} <span className="ml-2 font-mono">→</span>
                                         </Link>
                                     )}
                                 </div>
@@ -361,7 +361,7 @@ export default function ForumClient({
                         <div className="flex-1 flex flex-col h-full bg-[rgba(14,8,15,0.9)] overflow-hidden">
                             {/* Header Info */}
                             <div className="p-6 md:p-10 border-b border-white/10">
-                                <div className="text-[#D46476] font-mono text-xs mb-3 uppercase tracking-widest">Post Id: {selectedPost.id.split('-')[0]} // Auth: {selectedPost.author}</div>
+                                <div className="text-[#D46476] font-mono text-xs mb-3 uppercase tracking-widest">Post Id: {selectedPost.id.split('-')[0]} {'//'} Auth: {selectedPost.author}</div>
                                 <motion.h4 layoutId={`title-${selectedPost.id}`} className="text-3xl md:text-4xl font-black text-white leading-tight uppercase">
                                     {selectedPost.title}
                                 </motion.h4>
