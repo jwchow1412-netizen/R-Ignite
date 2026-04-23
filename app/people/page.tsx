@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const peopleSections = [
-  { title: "Judges", href: "/people/judges", status: "Coming Soon" },
-  { title: "Mentors", href: "/people/mentors", status: "Coming Soon" },
-  { title: "Speakers", href: "/people/speakers", status: "Coming Soon" },
-  { title: "Organising Team", href: "/people/organising-team", status: "Name updates coming soon" },
+  { title: "Judges", href: "/people/judges", status: "View Profiles" },
+  { title: "Speakers", href: "/people/speakers", status: "View Profiles" },
+  { title: "Panelists", href: "/people/panelists", status: "View Profiles" },
+  { title: "Organising Team", href: "/people/organising-team", status: "View Profiles" },
 ];
 
 export const metadata = {
@@ -20,7 +20,7 @@ export default function PeoplePage() {
         </p>
         <h1 className="text-4xl font-bold text-white">Guides, mentors, and organisers</h1>
         <p className="max-w-4xl text-lg text-[rgba(248,244,246,0.85)]">
-          Judges, mentors, and speakers will be announced soon.
+          Judges, speakers, panelists, and organisers of the MASA Hackathon.
         </p>
       </div>
 

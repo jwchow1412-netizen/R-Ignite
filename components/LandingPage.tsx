@@ -92,7 +92,7 @@ export default function LandingPage() {
                                 </Link>
                             </Button>
 
-                            <Link href="/downloads/handbook.pdf" target="_blank">
+                            <Link href="/downloads/handbook.pdf?v=3" target="_blank">
                                 <Button
                                     variant="outline"
                                     size="lg"

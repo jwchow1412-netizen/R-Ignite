@@ -6,26 +6,24 @@ export const metadata = {
 
 const resources = [
   {
-    title: "Rules & Regulations (R&R)",
-    href: "https://drive.google.com/file/d/1z6vmkkp9G7tRv9I1-Prd0tekPUpH7r-C/view?usp=sharing",
-    description: "Competition overview, rules and guidance.",
+    title: "Handbook",
+    href: "/downloads/handbook.pdf?v=3",
+    description: "Competition overview, rules, guidance and syllabus.",
   },
   {
     title: "Problem Statement",
-    href: "/downloads/problem-statement.pdf",
-    description: "Problem statement will be announced soon.",
-    comingSoon: true,
+    href: "/downloads/handbook.pdf?v=3",
+    description: "Detailed problem statement (see Handbook).",
   },
   {
     title: "Judging Rubric",
-    href: "/downloads/rubric.pdf",
-    description: "Judging criteria and scoring breakdown.",
-    comingSoon: true,
+    href: "/downloads/handbook.pdf?v=3",
+    description: "Judging criteria and scoring breakdown (see Handbook).",
   },
   {
     title: "Terms & Conditions",
-    href: "https://drive.google.com/file/d/13VjUxeAlJNu46hBcpgBxLGzZ8bTsH_b-/view?usp=share_link",
-    description: "Participant obligations and policies.",
+    href: "/downloads/handbook.pdf?v=3",
+    description: "Participant obligations and policies (see Handbook).",
   },
 ];
 

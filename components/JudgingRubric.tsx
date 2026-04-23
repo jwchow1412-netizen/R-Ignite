@@ -304,7 +304,7 @@ export default function JudgingRubric() {
         className="mt-16 flex justify-center"
       >
         <a 
-          href="/downloads/rubric.pdf" 
+          href="/downloads/handbook.pdf?v=3" 
           target="_blank"
           rel="noopener noreferrer"
           className="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-[#D46476] to-[#F89924] px-8 font-semibold text-white transition-all hover:scale-105 shadow-[0_0_15px_rgba(212,100,118,0.4)]"

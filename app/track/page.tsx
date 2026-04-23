@@ -43,18 +43,17 @@ export default function TrackPage() {
         <div className="glass-panel space-y-4 p-6">
           <h2 className="text-2xl font-semibold text-white">Downloads</h2>
           <p className="text-[rgba(248,244,246,0.85)]">
-            Detailed topic documentation will be uploaded soon. Use the resource centre to access current
-            placeholders and future updates.
+            Detailed topic documentation is now available. Download the handbook to access the problem statement, rules, and guidelines.
           </p>
           <div className="grid gap-3">
-            <Link href="/downloads/problem-statement.pdf" className="btn-secondary">
-              Problem Statement (Coming Soon)
+            <Link href="/downloads/handbook.pdf?v=3" target="_blank" className="btn-secondary">
+              Problem Statement
             </Link>
-            <Link href="/downloads/rubric.pdf" className="btn-secondary">
-              Judging Rubric (Coming Soon)
+            <Link href="/downloads/handbook.pdf?v=3" target="_blank" className="btn-secondary">
+              Judging Rubric
             </Link>
-            <Link href="/downloads/terms-and-conditions.pdf" className="btn-secondary">
-              Terms &amp; Conditions (Coming Soon)
+            <Link href="/downloads/handbook.pdf?v=3" target="_blank" className="btn-secondary">
+              Terms &amp; Conditions
             </Link>
           </div>
           <Link href="/resources" className="btn-primary">

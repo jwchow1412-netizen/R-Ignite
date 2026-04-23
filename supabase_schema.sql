@@ -406,3 +406,52 @@ drop policy if exists "Admins can insert site settings." on public.site_settings
 create policy "Admins can insert site settings."
   on public.site_settings for insert
   with check (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+-- 9. Forum Posts (Intel)
+create table if not exists public.forum_posts (
+  id uuid default uuid_generate_v4() primary key,
+  title text not null,
+  snippet text not null,
+  author text not null,
+  tags text[] default '{}'::text[] not null,
+  image_url text not null,
+  likes integer default 0 not null,
+  comments integer default 0 not null,
+  is_new boolean default true not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.forum_posts enable row level security;
+
+drop policy if exists "Anyone can read forum posts." on public.forum_posts;
+create policy "Anyone can read forum posts."
+  on public.forum_posts for select
+  using (true);
+
+drop policy if exists "Admins can manage forum posts." on public.forum_posts;
+create policy "Admins can manage forum posts."
+  on public.forum_posts for all
+  using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+-- 10. Forum Comments
+create table if not exists public.forum_comments (
+  id uuid default uuid_generate_v4() primary key,
+  post_id uuid references public.forum_posts on delete cascade,
+  author_id uuid references public.profiles(id) on delete cascade,
+  author_name text not null,
+  content text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.forum_comments enable row level security;
+
+drop policy if exists "Anyone can read forum comments." on public.forum_comments;
+create policy "Anyone can read forum comments."
+  on public.forum_comments for select
+  using (true);
+
+drop policy if exists "Authenticated users can post comments." on public.forum_comments;
+create policy "Authenticated users can post comments."
+  on public.forum_comments for insert
+  with check (auth.uid() = author_id);
+
