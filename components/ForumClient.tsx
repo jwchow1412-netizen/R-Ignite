@@ -334,7 +334,7 @@ export default function ForumClient({
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-10 pointer-events-none">
                     <motion.div 
                         layoutId={`post-${selectedPost.id}`} 
-                        className="bg-[#120a14] border border-white/20 w-full max-w-5xl md:h-[80vh] flex flex-col md:flex-row shadow-[0_0_50px_rgba(212,100,118,0.2)] rounded-sm pointer-events-auto overflow-hidden relative"
+                        className="bg-[#120a14] border border-white/20 w-full max-w-5xl h-[85vh] md:h-[80vh] flex flex-col md:flex-row shadow-[0_0_50px_rgba(212,100,118,0.2)] rounded-sm pointer-events-auto overflow-hidden relative"
                     >
                         {/* CLOSE BTN */}
                         <button onClick={() => setSelectedPost(null)} className="absolute top-4 right-4 z-50 text-white hover:text-[#D46476] bg-black/50 p-2 border border-white/10 transition-colors">
@@ -344,7 +344,7 @@ export default function ForumClient({
                         </button>
 
                         {/* Left Side: Editorial Image */}
-                        <motion.div layoutId={`image-${selectedPost.id}`} className="w-full md:w-2/5 h-64 md:h-full relative bg-black shrink-0 border-b md:border-b-0 md:border-r border-white/10">
+                        <motion.div layoutId={`image-${selectedPost.id}`} className="w-full md:w-2/5 h-48 md:h-full relative bg-black shrink-0 border-b md:border-b-0 md:border-r border-white/10">
                             <Image src={selectedPost.image_url} alt={selectedPost.title} fill className="object-cover opacity-80" unoptimized />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                             
