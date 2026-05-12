@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowUpRight,
   BadgeCheck,
+  CheckCircle2,
   Clock3,
   Gift,
   Lock,
@@ -15,13 +16,17 @@ import {
   Sparkles,
   Trophy,
   Users,
+  ScanLine
 } from 'lucide-react'
 import { startTransition, useEffect, useState } from 'react'
+import { useFormStatus } from 'react-dom'
 
 import RewardsProofModal from '@/components/RewardsProofModal'
+import RewardsQrScannerModal from '@/components/RewardsQrScannerModal'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/utils/supabase/client'
+import { submitDailyCheckIn } from '@/app/rewards/actions'
 
 type RewardsTabId = 'earn-points' | 'my-submissions' | 'leaderboard'
 
@@ -61,6 +66,8 @@ type RewardsPortalClientProps = {
   email: string | null
   currentPoints: number
   checkedIn: boolean
+  dailyCheckInsCount: number
+  lastCheckInDate: string | null
   eligibleForLuckyDraw: boolean
   nextTierName: string | null
   remainingToNextTier: number
@@ -96,22 +103,22 @@ function getStorageKey(userId: string) {
 
 function getStatusTone(status: RewardsPortalTaskItem['status']) {
   if (status === 'approved') {
-    return 'border-emerald-400/30 bg-emerald-400/10 text-emerald-100'
+    return 'border-emerald-400/20 bg-emerald-400/10 text-emerald-100'
   }
 
   if (status === 'pending') {
-    return 'border-amber-300/30 bg-amber-300/10 text-amber-100'
+    return 'border-[rgba(244,165,96,0.28)] bg-[rgba(244,165,96,0.08)] text-[#ffe8d4]'
   }
 
   if (status === 'rejected') {
-    return 'border-rose-300/30 bg-rose-400/10 text-rose-100'
+    return 'border-rose-400/20 bg-rose-400/10 text-rose-100'
   }
 
   if (status === 'planned') {
-    return 'border-white/12 bg-white/5 text-[rgba(248,244,246,0.62)]'
+    return 'border-white/10 bg-white/5 text-[rgba(248,244,246,0.58)]'
   }
 
-  return 'border-white/12 bg-white/5 text-[rgba(248,244,246,0.74)]'
+  return 'border-[rgba(212,100,118,0.28)] bg-[rgba(212,100,118,0.08)] text-[#ffd0d7]'
 }
 
 function getStatusLabel(status: RewardsPortalTaskItem['status']) {
@@ -138,10 +145,23 @@ function getTypeLabel(type: RewardsPortalTaskItem['type']) {
   return 'Social'
 }
 
-function getTierPillTone(unlocked: boolean) {
-  return unlocked
-    ? 'border-emerald-400/24 bg-emerald-400/10 text-emerald-100'
-    : 'border-white/12 bg-white/5 text-[rgba(248,244,246,0.68)]'
+function SubmitCheckInButton({ claimedToday }: { claimedToday: boolean }) {
+  const { pending } = useFormStatus()
+  
+  return (
+    <Button 
+      type="submit"
+      disabled={claimedToday || pending}
+      className={cn(
+        "w-full h-14 rounded-full text-sm font-bold uppercase tracking-wide transition-all",
+        claimedToday
+          ? "bg-[#27151c] text-[#854b5a] shadow-none hover:bg-[#27151c]"
+          : "bg-[#e11d48] text-white hover:bg-[#be123c] hover:-translate-y-0.5 shadow-[0_8px_30px_rgba(225,29,72,0.3)]"
+      )}
+    >
+      {pending ? "Claiming..." : claimedToday ? "Claimed Today" : "Claim Daily Points"}
+    </Button>
+  )
 }
 
 export default function RewardsPortalClient({
@@ -150,6 +170,8 @@ export default function RewardsPortalClient({
   email,
   currentPoints,
   checkedIn,
+  dailyCheckInsCount,
+  lastCheckInDate,
   eligibleForLuckyDraw,
   nextTierName,
   remainingToNextTier,
@@ -175,6 +197,7 @@ export default function RewardsPortalClient({
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<RewardsTabId>(initialTab)
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
+  const [isScannerOpen, setIsScannerOpen] = useState(false)
   const [pointsDelta, setPointsDelta] = useState<number | null>(null)
 
   useEffect(() => {
@@ -227,7 +250,7 @@ export default function RewardsPortalClient({
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'tier_redemptions', filter: `user_id=eq.${userId}` },
+        { event: '*', table: 'tier_redemptions', filter: `user_id=eq.${userId}` },
         scheduleRefresh
       )
       .subscribe()
@@ -252,26 +275,31 @@ export default function RewardsPortalClient({
     }
   }, [router])
 
+  const todayStr = new Date().toISOString().split('T')[0]
+  const lastCheckInStr = lastCheckInDate ? new Date(lastCheckInDate).toISOString().split('T')[0] : null
+  const claimedToday = todayStr === lastCheckInStr
+  // Generate the array of daily bubbles dynamically up to 30 days
+  const totalDaysToShow = 30
+  const daysArray = Array.from({ length: totalDaysToShow }, (_, i) => i + 1)
+
   if (!isPortalOpen) {
     return (
-      <div className="relative flex min-h-[calc(100vh-140px)] items-center justify-center overflow-hidden px-4">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[320px] bg-[radial-gradient(circle_at_top_left,rgba(212,100,118,0.22),transparent_34%),radial-gradient(circle_at_top_right,rgba(71,140,255,0.12),transparent_24%)]" />
-
+      <div className="relative flex min-h-[calc(100vh-140px)] items-center justify-center overflow-hidden px-4 bg-hero-gradient bg-fixed">
         <motion.div
           initial={{ opacity: 0, y: -20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ type: "spring", bounce: 0.4, duration: 0.8 }}
-          className="relative z-10 w-full max-w-2xl overflow-hidden rounded-2xl border border-red-500/30 bg-[#1a0f12] p-8 text-center shadow-2xl md:p-12"
+          className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[32px] border border-white/10 bg-black/40 backdrop-blur-xl p-8 text-center shadow-card md:p-12"
         >
           <motion.div
              animate={{ rotate: [-5, 5, -5] }}
              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-             className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-500/10 text-red-500 ring-4 ring-red-500/20"
+             className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-[rgba(212,100,118,0.12)] text-[#ffd3da] border border-[rgba(212,100,118,0.28)]"
           >
             <Lock className="h-10 w-10" />
           </motion.div>
-          <p className="mb-3 text-3xl font-bold tracking-tight text-white">Rewards Portal Locked</p>
-          <p className="mx-auto max-w-lg text-[15px] leading-relaxed text-[rgba(248,244,246,0.7)]">
+          <p className="mb-3 text-3xl font-extrabold tracking-tight text-white">Rewards Portal Locked</p>
+          <p className="mx-auto max-w-lg text-[15px] leading-relaxed text-[rgba(248,244,246,0.72)]">
             The organisers have temporarily paused the Rewards Portal. Submissions, points, and the leaderboard are currently hidden.
             <br/><br/>
             Check Discord for updates on when the portal will formally reopen!
@@ -279,13 +307,11 @@ export default function RewardsPortalClient({
 
           {isAdmin && (
              <div className="mt-8">
-               <Button asChild variant="outline" className="border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-red-400">
+               <Button asChild variant="outline" className="border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white rounded-full h-12 px-6">
                  <Link href="/rewards/admin">Unlock in Admin Panel</Link>
                </Button>
              </div>
           )}
-
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(239,68,68,0.15),transparent_70%)]" />
         </motion.div>
       </div>
     )
@@ -298,575 +324,419 @@ export default function RewardsPortalClient({
   const isUserInTopFive = leaderboard.some((entry) => entry.id === userId)
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Background gradients */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[320px] bg-[radial-gradient(circle_at_top_left,rgba(212,100,118,0.22),transparent_34%),radial-gradient(circle_at_top_right,rgba(71,140,255,0.12),transparent_24%)]" />
+    <div className="relative min-h-screen bg-[#0b060c] bg-hero-gradient bg-fixed pb-20">
+      {/* Edge-to-Edge Banner */}
+      <div className="w-full pointer-events-none [mask-image:linear-gradient(to_bottom,white_85%,transparent_100%)] relative z-0">
+        <Image 
+          src="/lucky-draw-banner.png" 
+          alt="Lucky Draw Carnival Season" 
+          width={1920}
+          height={600}
+          priority
+          className="w-full h-auto"
+        />
+      </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[rgba(248,244,246,0.5)]">
-              MASA Hackathon 2026: R-Ignite
-            </p>
-            <h1 className="mt-1 text-2xl font-semibold text-white md:text-3xl">Gamification & rewards</h1>
-          </div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-[rgba(248,244,246,0.72)]">
-            <span
-              className={cn(
-                'h-2 w-2 rounded-full',
-                proofSubmissionEnabled ? 'bg-emerald-300' : 'bg-amber-300'
-              )}
-            />
-            {proofSubmissionEnabled ? 'Live rewards data connected' : 'Blueprint mode'}
-          </div>
-        </div>
+      <div className="relative z-10 mx-auto max-w-4xl px-4 pb-12 md:px-6 -mt-8 sm:-mt-16">
 
-        <section className="sticky top-20 z-30 rounded-[22px] border border-white/10 bg-[rgba(12,9,18,0.84)] px-3 py-3 shadow-[0_22px_55px_rgba(0,0,0,0.28)] backdrop-blur-xl">
-          <div className="grid gap-3 xl:grid-cols-[1.15fr_1fr_1fr_auto]">
-            <div className="rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.03)] px-3 py-2.5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(248,244,246,0.54)]">
-                Participant
-              </p>
-              <div className="mt-1 flex items-center gap-2">
-                <span className="text-sm font-semibold text-white">{displayName}</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.16em] text-[rgba(248,244,246,0.68)]">
-                  {profileReady ? 'Live' : 'Preview'}
-                </span>
-              </div>
-              <p className="mt-1 truncate text-xs text-[rgba(248,244,246,0.52)]">
-                {email ?? 'Signed-in participant account'}
-              </p>
+        {/* Daily Check-in Glass Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, type: "spring" }}
+          className="mb-8 overflow-hidden rounded-[32px] border border-white/10 bg-black/40 backdrop-blur-xl p-6 sm:p-8 relative"
+        >
+          <div className="absolute top-0 right-0 h-64 w-64 bg-[#ec7196] opacity-10 blur-[100px] pointer-events-none rounded-full" />
+
+          <div className="mb-6 flex items-center justify-between relative z-10">
+            <div>
+              <h2 className="text-2xl font-black text-white">Daily Check-in</h2>
+              <p className="mt-1 text-sm font-medium text-[rgba(248,244,246,0.68)]">Check in to accumulate points.</p>
             </div>
-
-            <div className="relative overflow-hidden rounded-2xl border border-[rgba(212,100,118,0.18)] bg-[linear-gradient(135deg,rgba(157,31,67,0.18),rgba(244,143,116,0.08))] px-3 py-2.5">
-              <AnimatePresence>
-                {pointsDelta ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.28, ease: 'easeOut' }}
-                    className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border border-[#ffd36f]/35 bg-[rgba(255,211,111,0.16)] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#fff0bc]"
-                  >
-                    <Sparkles className="h-3 w-3" />
-                    +{pointsDelta}
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
-
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(248,244,246,0.56)]">
-                Total points
-              </p>
-              <div className="mt-1 flex items-end gap-2">
-                <motion.p
-                  key={currentPoints}
-                  initial={pointsDelta ? { opacity: 0.7, y: 6 } : false}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.28, ease: 'easeOut' }}
-                  className="text-3xl font-semibold leading-none text-white"
-                >
-                  {currentPoints}
-                </motion.p>
-                <span className="pb-1 text-[11px] uppercase tracking-[0.18em] text-[rgba(248,244,246,0.5)]">
-                  pts
-                </span>
-              </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#d46476] via-[#ef8f74] to-[#ffd07b]"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-              <p className="mt-2 text-xs text-[rgba(248,244,246,0.68)]">
-                {nextTierName ? `${remainingToNextTier} points to ${nextTierName}.` : 'Top tier reached.'}
-              </p>
+            <div className="flex flex-col items-end">
+              <span className="text-3xl font-black text-[#ff8ba7] glow-text">{currentPoints}</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[rgba(248,244,246,0.58)]">Total Points</span>
             </div>
+          </div>
 
-            <div className="rounded-2xl border border-[rgba(99,194,255,0.16)] bg-[linear-gradient(135deg,rgba(35,81,121,0.18),rgba(73,166,255,0.06))] px-3 py-2.5">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(248,244,246,0.56)]">
-                  Lucky draw status
-                </p>
-                <span
+          <div className="mb-6 flex justify-start gap-3 overflow-x-auto pb-6 pt-2 px-2 -mx-2 hide-scrollbar relative z-10">
+            {daysArray.map((day) => {
+              const isPast = day <= dailyCheckInsCount
+              const isToday = day === dailyCheckInsCount + 1 && !claimedToday
+              const pointsForDay = Math.ceil(day / 7) * 5
+              
+              return (
+                <div 
+                  key={day}
                   className={cn(
-                    'rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em]',
-                    eligibleForLuckyDraw
-                      ? 'border-emerald-400/24 bg-emerald-400/10 text-emerald-100'
-                      : 'border-white/12 bg-white/5 text-[rgba(248,244,246,0.72)]'
+                    "flex min-w-[76px] flex-col items-center justify-center rounded-[20px] p-3 transition-all border shrink-0",
+                    isPast ? "bg-[#132c22] border-[#10b981] shadow-[0_0_15px_rgba(16,185,129,0.15)]" : 
+                    isToday ? "bg-[#380e1b] border-[#e11d48] scale-105 shadow-[0_0_20px_rgba(225,29,72,0.3)]" : 
+                    "bg-black border-[#27151c] opacity-80"
                   )}
                 >
-                  {eligibleForLuckyDraw ? 'Eligible' : 'Pending'}
-                </span>
-              </div>
-              <div className="mt-2 flex items-center gap-2">
-                <span
-                  className={cn(
-                    'rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em]',
-                    checkedIn
-                      ? 'border-emerald-400/24 bg-emerald-400/10 text-emerald-100'
-                      : 'border-amber-300/24 bg-amber-300/10 text-amber-100'
-                  )}
-                >
-                  {checkedIn ? 'Checked in' : 'Attendance required'}
-                </span>
-                <span className="text-xs text-[rgba(248,244,246,0.64)]">
-                  {luckyDrawMinimumPoints} point threshold
-                </span>
-              </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#2d6fa6] via-[#3ea2ff] to-[#7fd4ff]"
-                  style={{ width: `${progressToLuckyDraw}%` }}
-                />
-              </div>
-              <p className="mt-2 text-xs text-[rgba(248,244,246,0.68)]">
-                {eligibleForLuckyDraw
-                  ? `On track for the ${luckyDrawDate} live draw.`
-                  : `Earn approved points and complete check-in to unlock entry.`}
-              </p>
-            </div>
+                  <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[rgba(248,244,246,0.58)]">
+                    Day {day}
+                  </span>
+                  <div className={cn("flex h-10 w-10 items-center justify-center rounded-full mb-1", 
+                    isPast ? "bg-[#064e3b]" : isToday ? "bg-[#e11d48]/20" : "bg-[#180a10]"
+                  )}>
+                    {isPast ? (
+                      <CheckCircle2 className="h-5 w-5 text-[#10b981]" />
+                    ) : (
+                      <Gift className={cn("h-5 w-5", isToday ? "text-[#e11d48]" : "text-[#3f1d2b]")} />
+                    )}
+                  </div>
+                  <span className={cn(
+                    "text-xs font-black mt-1",
+                    isPast ? "text-[#10b981]" : 
+                    isToday ? "text-[#e11d48]" : 
+                    "text-[#3f1d2b]"
+                  )}>
+                    +{pointsForDay}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
 
-            <div className="flex items-stretch gap-2 xl:flex-col xl:justify-between">
-              {isAdmin ? (
-                <Button asChild variant="secondary" size="sm" className="h-10 rounded-xl px-4">
-                  <Link href="/rewards/admin">Admin Panel</Link>
-                </Button>
-              ) : null}
-              <Button asChild size="sm" className="bg-[#d46476] text-white hover:bg-[#b05261]">
-                          <Link href={isPortalOpen ? "/rewards/check-in" : "#"} className={!isPortalOpen ? "pointer-events-none opacity-50" : ""}>
-                            {isPortalOpen ? "Scan QR to Check In" : "Portal Locked"}
-                          </Link>
-                        </Button>
-              <div className="flex flex-1 items-center rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-[rgba(248,244,246,0.66)] xl:flex-none">
-                Compact rewards control surface
+          <form action={submitDailyCheckIn} className="relative z-10">
+            <SubmitCheckInButton claimedToday={claimedToday} />
+          </form>
+        </motion.div>
+
+        {/* Dashboard Progress Cards */}
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, type: "spring" }}
+          className="mb-8"
+        >
+          {/* Lucky Draw Status */}
+          <div className="rounded-3xl border border-[#27151c] bg-black p-6 relative overflow-hidden">
+            <div className="absolute -right-10 -top-10 h-32 w-32 bg-[#d46476] opacity-20 blur-[50px] pointer-events-none rounded-full" />
+            <div className="flex items-center justify-between gap-2 relative z-10">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[rgba(248,244,246,0.58)]">
+                Lucky Draw
+              </p>
+              <span
+                className={cn(
+                  'rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em]',
+                  eligibleForLuckyDraw
+                    ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-100'
+                    : 'border-white/10 bg-white/5 text-[rgba(248,244,246,0.58)]'
+                )}
+              >
+                {eligibleForLuckyDraw ? 'Eligible' : 'Pending'}
+              </span>
+            </div>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10 relative z-10">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${progressToLuckyDraw}%` }}
+                transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                className={cn("h-full rounded-full", eligibleForLuckyDraw ? "bg-emerald-400" : "bg-[#f4a560]")}
+              />
+            </div>
+            <div className="mt-3 flex items-center justify-between text-xs font-medium text-[rgba(248,244,246,0.68)] relative z-10">
+               <span>🎯 200 points per lucky draw entry</span>
+               <span>{luckyDrawMinimumPoints} pts min</span>
+            </div>
+            {eligibleForLuckyDraw && (
+              <div className="mt-2 text-[11px] font-bold text-[#ffd0d7] relative z-10">
+                Tickets: {1 + Math.floor(currentPoints / luckyDrawMinimumPoints)} 
+                <span className="text-[rgba(248,244,246,0.58)] ml-1">(1 base + {Math.floor(currentPoints / luckyDrawMinimumPoints)} extra)</span>
               </div>
+            )}
+            <div className="mt-4 rounded-xl border border-[rgba(212,100,118,0.15)] bg-[rgba(212,100,118,0.05)] p-3 text-[10px] leading-relaxed text-[rgba(248,244,246,0.58)] relative z-10">
+               <strong className="text-[#ffd0d7]">Disclaimer:</strong> Attending the Grand Final automatically secures your <strong>1 base entry</strong> to the lucky draw. This portal helps you earn <strong>additional entries</strong> for every 200 points accumulated!
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        {message || setupMessage ? (
-          <div className="mt-3 space-y-2">
-            {message ? (
-              <div className="rounded-2xl border border-[rgba(212,100,118,0.24)] bg-[rgba(212,100,118,0.1)] px-3 py-2 text-sm text-[#ffd6dd]">
+        {/* Alerts */}
+        {(message || setupMessage) && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 space-y-3"
+          >
+            {message && (
+              <div className="rounded-2xl border border-[rgba(212,100,118,0.28)] bg-[rgba(212,100,118,0.1)] px-4 py-3 text-sm font-semibold text-[#ffd6dd]">
                 {message}
               </div>
-            ) : null}
-            {setupMessage ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-[rgba(248,244,246,0.78)]">
+            )}
+            {setupMessage && (
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-[rgba(248,244,246,0.8)]">
                 {setupMessage}
               </div>
-            ) : null}
-          </div>
-        ) : null}
+            )}
+          </motion.div>
+        )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-2 rounded-[20px] border border-white/10 bg-[rgba(10,8,16,0.7)] p-1.5 backdrop-blur-sm">
+        {/* Tab Navigation */}
+        <div className="mb-6 flex w-full flex-wrap items-center gap-2 overflow-x-auto p-1 hide-scrollbar">
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                'rounded-2xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition',
-                activeTab === tab.id
-                  ? 'bg-[linear-gradient(135deg,rgba(159,31,67,0.9),rgba(212,100,118,0.88))] text-white shadow-[0_10px_24px_rgba(212,100,118,0.2)]'
-                  : 'text-[rgba(248,244,246,0.62)] hover:bg-white/5 hover:text-white'
-              )}
+              className="relative rounded-full px-5 py-2.5 text-sm font-bold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#d46476]"
             >
-              {tab.label}
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="active-tab"
+                  className="absolute inset-0 rounded-full border border-[rgba(212,100,118,0.28)] bg-[rgba(212,100,118,0.15)] shadow-[0_0_15px_rgba(212,100,118,0.2)]"
+                  initial={false}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+              <span className={cn("relative z-10", activeTab === tab.id ? "text-white" : "text-[rgba(248,244,246,0.58)] hover:text-white")}>
+                {tab.label}
+              </span>
             </button>
           ))}
-          <div className="ml-auto hidden text-[11px] uppercase tracking-[0.18em] text-[rgba(248,244,246,0.46)] md:block">
-            Dense view · modal proof flow
-          </div>
         </div>
 
-        <div className="mt-4 grid gap-4 xl:grid-cols-[1.45fr,0.85fr]">
-          <section className="rounded-[22px] border border-white/10 bg-[rgba(12,9,18,0.72)] p-3 shadow-[0_16px_44px_rgba(0,0,0,0.22)]">
-            {activeTab === 'earn-points' ? (
-              <div>
-                <div className="mb-3 flex items-center justify-between gap-3 px-1">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(248,244,246,0.52)]">
-                      Earn points
-                    </p>
-                    <h2 className="mt-1 text-lg font-semibold text-white">Complete tasks and submit proof fast</h2>
-                  </div>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[rgba(248,244,246,0.62)]">
-                    {tasks.length} tasks
-                  </span>
+        {/* Main Content Grid - No longer split into columns */}
+        <div className="w-full">
+          <AnimatePresence mode="wait">
+            {activeTab === 'earn-points' && (
+              <motion.div
+                key="earn-points"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-4"
+              >
+                <div className="mb-4 px-1">
+                  <h2 className="text-xl font-black text-white">Earn Points</h2>
                 </div>
 
-                <div className="overflow-x-auto rounded-[18px] border border-white/10">
-                  <table className="min-w-[760px] w-full text-left">
-                    <thead className="bg-[rgba(255,255,255,0.03)]">
-                      <tr className="text-[10px] uppercase tracking-[0.18em] text-[rgba(248,244,246,0.45)]">
-                        <th className="px-3 py-2 font-medium">Task</th>
-                        <th className="px-3 py-2 font-medium">Points</th>
-                        <th className="px-3 py-2 font-medium">Status</th>
-                        <th className="px-3 py-2 font-medium text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/8">
-                      {tasks.map((task) => (
-                        <tr key={task.id} className="align-top">
-                          <td className="px-3 py-2.5">
-                            <div className="flex items-start gap-3">
-                              {task.imageUrl && (
-                                <div className="relative mt-0.5 hidden h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-white/10 sm:block">
-                                  <Image src={task.imageUrl} alt={task.title} fill className="object-cover" unoptimized={task.imageUrl.includes('supabase')} />
-                                </div>
-                              )}
-                              <div className="rounded-xl border border-white/10 bg-white/5 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.62)]">
-                                {getTypeLabel(task.type)}
-                              </div>
-                              <div className="min-w-0">
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <p className="text-sm font-semibold text-white">{task.title}</p>
-                                  {task.source === 'fallback' ? (
-                                    <span className="rounded-full border border-[rgba(212,100,118,0.24)] bg-[rgba(212,100,118,0.08)] px-2 py-0.5 text-[10px] uppercase tracking-[0.16em] text-[#ffd0d7]">
-                                      Planned
-                                    </span>
-                                  ) : null}
-                                </div>
-                                <p className="mt-1 text-xs leading-5 text-[rgba(248,244,246,0.6)]">
-                                  {task.description}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-3 py-2.5">
-                            <span className="inline-flex rounded-xl border border-[rgba(212,100,118,0.2)] bg-[rgba(212,100,118,0.1)] px-2.5 py-1 text-sm font-semibold text-white">
-                              {task.points}
-                            </span>
-                          </td>
-                          <td className="px-3 py-2.5">
-                            <div className="space-y-1.5">
-                              <span
-                                className={cn(
-                                  'inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]',
-                                  getStatusTone(task.status)
-                                )}
-                              >
-                                {getStatusLabel(task.status)}
-                              </span>
-                              {task.proofUrl ? (
-                                <Link
-                                  href={task.proofUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-xs text-[#ffd4db] transition hover:text-white"
-                                >
-                                  View proof
-                                  <ArrowUpRight className="h-3 w-3" />
-                                </Link>
-                              ) : (
-                                <p className="text-xs text-[rgba(248,244,246,0.46)]">{task.verification}</p>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-3 py-2.5 text-right">
-                            {task.requiresProof && task.source === 'live' && proofSubmissionEnabled ? (
-                              <Button
-                                type="button"
-                                size="sm"
-                                className="h-8 rounded-xl px-3 text-xs"
-                                onClick={() => setSelectedTaskId(task.id)}
-                                disabled={!isPortalOpen}
-                              >
-                                {isPortalOpen ? (task.proofUrl ? 'Update proof' : 'Submit proof') : 'Locked'}
-                              </Button>
-                            ) : task.requiresProof ? (
-                              <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[rgba(248,244,246,0.56)]">
-                                Schema needed
-                              </span>
-                            ) : (
-                              <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[rgba(248,244,246,0.56)]">
-                                Venue QR
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ) : null}
-
-            {activeTab === 'my-submissions' ? (
-              <div>
-                <div className="mb-3 flex items-center justify-between gap-3 px-1">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(248,244,246,0.52)]">
-                      My submissions
-                    </p>
-                    <h2 className="mt-1 text-lg font-semibold text-white">Track pending, approved, and rejected proof</h2>
-                  </div>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[rgba(248,244,246,0.62)]">
-                    {submissions.length} items
-                  </span>
-                </div>
-
-                {submissions.length > 0 ? (
-                  <div className="space-y-2">
-                    {submissions.map((submission) => (
-                      <div
-                        key={submission.id}
-                        className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-3 py-3"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <div className="min-w-0">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <p className="text-sm font-semibold text-white">{submission.title}</p>
-                              <span
-                                className={cn(
-                                  'inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]',
-                                  getStatusTone(submission.status)
-                                )}
-                              >
-                                {getStatusLabel(submission.status)}
-                              </span>
-                            </div>
-                            <p className="mt-1 text-xs text-[rgba(248,244,246,0.58)]">
-                              {submission.description}
-                            </p>
-                          </div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            {submission.proofUrl ? (
-                              <Button asChild variant="secondary" size="sm" className="h-8 rounded-xl px-3 text-xs">
-                                <Link href={submission.proofUrl} target="_blank" rel="noopener noreferrer">
-                                  View proof
-                                </Link>
-                              </Button>
-                            ) : null}
-                            {submission.requiresProof && proofSubmissionEnabled ? (
-                              <Button
-                                type="button"
-                                size="sm"
-                                className="h-8 rounded-xl px-3 text-xs"
-                                onClick={() => setSelectedTaskId(submission.id)}
-                                disabled={!isPortalOpen}
-                              >
-                                {isPortalOpen ? 'Update' : 'Locked'}
-                              </Button>
-                            ) : null}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-5 text-sm text-[rgba(248,244,246,0.72)]">
-                    No proof submissions yet. Submit your first social or deliverable task from the Earn Points tab.
-                  </div>
-                )}
-              </div>
-            ) : null}
-
-            {activeTab === 'leaderboard' ? (
-              <div>
-                <div className="mb-3 flex items-center justify-between gap-3 px-1">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(248,244,246,0.52)]">
-                      Leaderboard
-                    </p>
-                    <h2 className="mt-1 text-lg font-semibold text-white">See who is driving the most momentum</h2>
-                  </div>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[rgba(248,244,246,0.62)]">
-                    Top 5
-                  </span>
-                </div>
-
-                {leaderboardReady && leaderboard.length > 0 ? (
-                  <div className="space-y-3">
-                    <div className="overflow-hidden rounded-[18px] border border-white/10">
-                      <table className="w-full">
-                        <thead className="bg-[rgba(255,255,255,0.03)]">
-                          <tr className="text-[10px] uppercase tracking-[0.18em] text-[rgba(248,244,246,0.45)]">
-                            <th className="px-3 py-2 text-left font-medium">Rank</th>
-                            <th className="px-3 py-2 text-left font-medium">Participant</th>
-                            <th className="px-3 py-2 text-left font-medium">Attendance</th>
-                            <th className="px-3 py-2 text-right font-medium">Points</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/8">
-                          {leaderboard.map((entry, index) => (
-                            <tr key={entry.id}>
-                              <td className="px-3 py-2.5 text-sm font-semibold text-white">#{index + 1}</td>
-                              <td className="px-3 py-2.5 text-sm text-white">{entry.displayName}</td>
-                              <td className="px-3 py-2.5">
-                                <span
-                                  className={cn(
-                                    'inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]',
-                                    entry.isCheckedIn
-                                      ? 'border-emerald-400/24 bg-emerald-400/10 text-emerald-100'
-                                      : 'border-white/12 bg-white/5 text-[rgba(248,244,246,0.66)]'
-                                  )}
-                                >
-                                  {entry.isCheckedIn ? 'Checked in' : 'Not checked in'}
-                                </span>
-                              </td>
-                              <td className="px-3 py-2.5 text-right text-base font-semibold text-white">
-                                {entry.totalPoints}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {personalRank ? (
-                      <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-3 text-sm text-[rgba(248,244,246,0.76)]">
-                        {isUserInTopFive
-                          ? `You are currently in the top 5 at rank #${personalRank}.`
-                          : `Your current personal rank is #${personalRank}.`}
-                      </div>
-                    ) : null}
-                  </div>
-                ) : (
-                  <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-5 text-sm text-[rgba(248,244,246,0.72)]">
-                    The leaderboard will appear once organiser scoring data is available in Supabase.
-                  </div>
-                )}
-              </div>
-            ) : null}
-          </section>
-
-          <aside className="space-y-4">
-            <div className="rounded-[22px] border border-white/10 bg-[rgba(12,9,18,0.72)] p-3">
-              <div className="flex items-center gap-2">
-                <div className="rounded-xl border border-white/10 bg-[rgba(212,100,118,0.12)] p-2 text-[#ffd3da]">
-                  <Gift className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(248,244,246,0.52)]">
-                    Redemption tiers
-                  </p>
-                  <h3 className="text-sm font-semibold text-white">Compact tier ladder</h3>
-                </div>
-              </div>
-
-              <div className="mt-3 space-y-2">
-                {tiers.map((tier) => {
-                  const unlocked = currentPoints >= tier.pointsRequired
-                  const claimed = claimedTierNames.includes(tier.name)
-
-                  return (
-                    <div
-                      key={tier.name}
-                      className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-3 py-2.5"
+                <div className="grid gap-3">
+                  {tasks.map((task, idx) => (
+                    <motion.div
+                      key={task.id}
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.05, duration: 0.3 }}
+                      className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-[#27151c] bg-black p-5 transition-all hover:border-[#e11d48]/50 hover:bg-[#130a14]"
                     >
-                      <div className="flex items-center justify-between gap-2">
-                        <div>
-                          <p className="text-sm font-semibold text-white">{tier.name}</p>
-                          <p className="text-xs text-[rgba(248,244,246,0.62)]">{tier.reward}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-semibold text-white">{tier.pointsRequired}</p>
-                          <p className="text-[10px] uppercase tracking-[0.16em] text-[rgba(248,244,246,0.5)]">
-                            pts
+                      <div className="flex items-center gap-4 w-full sm:w-auto">
+                        {task.imageUrl && (
+                          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-[#27151c] bg-[#180a10]">
+                            <Image src={task.imageUrl} alt={task.title} fill className="object-cover" unoptimized={task.imageUrl.includes('supabase')} />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="inline-block rounded-full border border-[#27151c] bg-[#180a10] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-[rgba(248,244,246,0.58)]">
+                              {getTypeLabel(task.type)}
+                            </span>
+                            <span className={cn('inline-flex rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.16em]', getStatusTone(task.status))}>
+                              {getStatusLabel(task.status)}
+                            </span>
+                          </div>
+                          <h3 className="text-base font-bold leading-tight text-white line-clamp-1 group-hover:line-clamp-none transition-all">{task.title}</h3>
+                          <p className="mt-1.5 text-xs text-[rgba(248,244,246,0.68)] hidden group-hover:block transition-all">
+                            {task.description}
                           </p>
                         </div>
                       </div>
-                      <div className="mt-2 flex items-center justify-between gap-2">
-                        <p className="text-xs text-[rgba(248,244,246,0.56)]">{tier.note}</p>
-                        <span
+                      
+                      <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                        <span className="inline-flex items-center justify-center rounded-full border border-[#380e1b] bg-[#380e1b] px-3 py-1 text-sm font-black text-[#e11d48]">
+                          +{task.points} pts
+                        </span>
+                        
+                        {task.type === 'attendance' ? (
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="rounded-full bg-[#e11d48] text-white hover:bg-[#be123c] transition-all font-black"
+                            onClick={() => setIsScannerOpen(true)}
+                            disabled={!isPortalOpen}
+                          >
+                            <ScanLine className="w-4 h-4 mr-1.5" />
+                            {isPortalOpen ? 'Scan QR' : 'Locked'}
+                          </Button>
+                        ) : task.requiresProof && task.source === 'live' && proofSubmissionEnabled ? (
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="rounded-full bg-white text-black hover:bg-gray-200 transition-all font-black"
+                            onClick={() => setSelectedTaskId(task.id)}
+                            disabled={!isPortalOpen}
+                          >
+                            {isPortalOpen ? (task.proofUrl ? 'Update' : 'Submit') : 'Locked'}
+                          </Button>
+                        ) : (
+                          <div className="rounded-full bg-[#180a10] px-3 py-1.5 text-[10px] font-bold text-[rgba(248,244,246,0.58)]">
+                            {task.requiresProof ? 'No Schema' : 'Auto'}
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'my-submissions' && (
+              <motion.div
+                key="my-submissions"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="mb-4 px-1">
+                  <h2 className="text-xl font-black text-white">My Submissions</h2>
+                </div>
+
+                {submissions.length > 0 ? (
+                  <div className="grid gap-3">
+                    {submissions.map((submission, idx) => (
+                      <motion.div
+                        key={submission.id}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[20px] border border-white/10 bg-black/40 backdrop-blur-md p-4"
+                      >
+                        <div className="flex-1 w-full">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={cn('inline-flex rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.16em]', getStatusTone(submission.status))}>
+                              {getStatusLabel(submission.status)}
+                            </span>
+                          </div>
+                          <h3 className="text-sm font-black text-white line-clamp-1">{submission.title}</h3>
+                        </div>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          {submission.proofUrl && (
+                            <Button asChild variant="outline" size="sm" className="h-8 rounded-full border-white/10 bg-white/5 font-bold text-white hover:bg-white/10">
+                              <Link href={submission.proofUrl} target="_blank" rel="noopener noreferrer">
+                                View
+                              </Link>
+                            </Button>
+                          )}
+                          {submission.requiresProof && proofSubmissionEnabled && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="h-8 rounded-full bg-white text-black hover:bg-gray-200 font-bold"
+                              onClick={() => setSelectedTaskId(submission.id)}
+                              disabled={!isPortalOpen}
+                            >
+                              {isPortalOpen ? 'Update' : 'Locked'}
+                            </Button>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center rounded-[32px] border border-white/10 bg-black/40 py-16 text-center">
+                    <div className="mb-4 rounded-2xl border border-[rgba(212,100,118,0.28)] bg-[rgba(212,100,118,0.12)] p-4 text-[#ffd3da]">
+                      <Gift className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-base font-black text-white">No submissions yet</h3>
+                    <p className="mt-1 text-sm font-medium text-[rgba(248,244,246,0.68)]">
+                      Complete tasks to see them here.
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {activeTab === 'leaderboard' && (
+              <motion.div
+                key="leaderboard"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="mb-4 px-1">
+                  <h2 className="text-xl font-black text-white">Leaderboard</h2>
+                </div>
+
+                {leaderboardReady && leaderboard.length > 0 ? (
+                  <div className="space-y-4">
+                    <div className="overflow-hidden rounded-[32px] border border-white/10 bg-black/40 backdrop-blur-md">
+                      {leaderboard.map((entry, index) => (
+                        <div 
+                          key={entry.id} 
                           className={cn(
-                            'shrink-0 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.16em]',
-                            claimed
-                              ? 'border-sky-400/24 bg-sky-400/10 text-sky-100'
-                              : getTierPillTone(unlocked)
+                            "flex items-center justify-between p-4 transition-colors hover:bg-white/5",
+                            index !== leaderboard.length - 1 && "border-b border-white/5",
+                            entry.id === userId && "bg-[rgba(212,100,118,0.1)]"
                           )}
                         >
-                          {claimed
-                            ? 'Claimed'
-                            : unlocked
-                              ? 'Unlocked'
-                              : `${Math.max(tier.pointsRequired - currentPoints, 0)} left`}
-                        </span>
-                      </div>
+                          <div className="flex items-center gap-3">
+                            <div className={cn(
+                              "flex h-8 w-8 items-center justify-center rounded-full font-black text-xs",
+                              index === 0 ? "border border-amber-400/30 bg-amber-400/20 text-amber-200" :
+                              index === 1 ? "border border-slate-300/30 bg-slate-300/20 text-slate-200" :
+                              index === 2 ? "border border-orange-400/30 bg-orange-400/20 text-orange-200" :
+                              "border border-white/10 bg-white/5 text-[rgba(248,244,246,0.58)]"
+                            )}>
+                              #{index + 1}
+                            </div>
+                            <div>
+                              <p className="font-bold text-white text-sm">{entry.displayName}</p>
+                              <span className={cn(
+                                'mt-0.5 inline-flex rounded-full border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.1em]',
+                                entry.isCheckedIn
+                                  ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-100'
+                                  : 'border-white/10 bg-white/5 text-[rgba(248,244,246,0.58)]'
+                              )}>
+                                {entry.isCheckedIn ? 'Checked in' : 'Unchecked'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-base font-black text-[#ff8ba7] glow-text">{entry.totalPoints}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )
-                })}
-              </div>
-            </div>
 
-            <div className="rounded-[22px] border border-white/10 bg-[rgba(12,9,18,0.72)] p-3">
-              <div className="flex items-center gap-2">
-                <div className="rounded-xl border border-white/10 bg-[rgba(255,255,255,0.06)] p-2 text-white">
-                  <ShieldCheck className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(248,244,246,0.52)]">
-                    Lucky draw
-                  </p>
-                  <h3 className="text-sm font-semibold text-white">Eligibility checklist</h3>
-                </div>
-              </div>
-
-              <ul className="mt-3 space-y-2">
-                {luckyDrawRules.map((rule) => (
-                  <li key={rule} className="flex gap-2 text-xs leading-5 text-[rgba(248,244,246,0.72)]">
-                    <BadgeCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#ffb1be]" />
-                    <span>{rule}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="rounded-[22px] border border-white/10 bg-[rgba(12,9,18,0.72)] p-3">
-              <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-1">
-                <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-3 py-2.5">
-                  <div className="flex items-center gap-2">
-                    <QrCode className="h-4 w-4 text-[#ffd5dc]" />
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.54)]">
-                      Venue tasks
-                    </p>
+                    {personalRank && (
+                      <div className="rounded-2xl border border-[rgba(212,100,118,0.28)] bg-[rgba(212,100,118,0.08)] p-4 text-center text-sm font-bold text-[#ffd0d7]">
+                        {isUserInTopFive
+                          ? `🔥 You are in the top 5 at rank #${personalRank}!`
+                          : `Your current rank is #${personalRank}. Keep going!`}
+                      </div>
+                    )}
                   </div>
-                  <p className="mt-2 text-xs text-[rgba(248,244,246,0.72)]">
-                    Attendance-based tasks are verified through live QR check-in instead of proof uploads.
-                  </p>
-                </div>
-
-                <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-3 py-2.5">
-                  <div className="flex items-center gap-2">
-                    <Clock3 className="h-4 w-4 text-[#ffd5dc]" />
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.54)]">
-                      Moderation
-                    </p>
+                ) : (
+                  <div className="rounded-[32px] border border-white/10 bg-black/40 p-10 text-center text-sm font-bold text-[rgba(248,244,246,0.58)]">
+                    The leaderboard will appear once scores are available.
                   </div>
-                  <p className="mt-2 text-xs text-[rgba(248,244,246,0.72)]">
-                    Online proofs stay pending until organisers review and approve them.
-                  </p>
-                </div>
-
-                <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-3 py-2.5">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-[#ffd5dc]" />
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[rgba(248,244,246,0.54)]">
-                      Social push
-                    </p>
-                  </div>
-                  <p className="mt-2 text-xs text-[rgba(248,244,246,0.72)]">
-                    Prioritise posts, comments, and deliverables to move up the leaderboard quickly.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {isAdmin ? (
-              <Button asChild variant="secondary" className="h-10 w-full rounded-xl">
-                <Link href="/rewards/admin">
-                  Open admin workspace
-                  <Trophy className="h-4 w-4" />
-                </Link>
-              </Button>
-            ) : null}
-          </aside>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
+
+        {isAdmin && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-12 w-full"
+          >
+            <Button asChild className="h-14 w-full rounded-full border border-white/10 bg-white/5 text-[rgba(248,244,246,0.72)] hover:bg-white/10 hover:text-white font-black shadow-sm backdrop-blur-md">
+              <Link href="/rewards/admin" className="flex items-center justify-center gap-2">
+                Organiser Admin Panel
+                <Trophy className="h-5 w-5 text-[rgba(248,244,246,0.58)]" />
+              </Link>
+            </Button>
+          </motion.div>
+        )}
       </div>
 
-      {selectedTask && proofSubmissionEnabled && selectedTask.requiresProof ? (
+      {selectedTask && proofSubmissionEnabled && selectedTask.requiresProof && (
         <RewardsProofModal
           onClose={() => setSelectedTaskId(null)}
           returnTab={activeTab}
@@ -879,7 +749,12 @@ export default function RewardsPortalClient({
             existingProofUrl: selectedTask.proofUrl,
           }}
         />
-      ) : null}
+      )}
+
+      <RewardsQrScannerModal 
+        isOpen={isScannerOpen} 
+        onClose={() => setIsScannerOpen(false)} 
+      />
     </div>
   )
 }

@@ -237,6 +237,54 @@ export async function markTierRedemption(formData: FormData) {
   redirectAdminMessage(`${tierName} marked as claimed.`)
 }
 
+export async function submitDailyCheckIn() {
+  const supabase = createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/login?next=%2Frewards')
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('id, daily_check_ins_count, last_check_in_date, total_points')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  if (profileError || !profile) {
+    redirectWithMessage('Could not load profile for check-in.', 'earn-points')
+  }
+
+  const todayStr = new Date().toISOString().split('T')[0]
+  const lastCheckInStr = profile.last_check_in_date ? new Date(profile.last_check_in_date).toISOString().split('T')[0] : null
+
+  if (todayStr === lastCheckInStr) {
+    redirectWithMessage('You have already checked in today!', 'earn-points')
+  }
+
+  const nextCheckInDay = profile.daily_check_ins_count + 1
+  const pointsToAward = Math.ceil(nextCheckInDay / 7) * 5
+
+  const { error: updateError } = await supabase
+    .from('profiles')
+    .update({
+      daily_check_ins_count: nextCheckInDay,
+      total_points: profile.total_points + pointsToAward,
+      last_check_in_date: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', user.id)
+
+  if (updateError) {
+    redirectWithMessage('Could not complete daily check-in right now.', 'earn-points')
+  }
+
+  revalidatePath('/rewards')
+  redirectWithMessage(`Daily check-in successful! +${pointsToAward} points awarded.`, 'earn-points')
+}
+
 export async function recordManualAttendance(formData: FormData) {
   const email = String(formData.get('email') ?? '')
     .trim()
@@ -398,7 +446,16 @@ export async function runLuckyDraw(formData: FormData) {
     (participant) => !priorWinnerIds.has(participant.id)
   )
 
-  const winner = chooseLuckyDrawWinner(remainingPool)
+  const weightedPool: typeof remainingPool = []
+  for (const participant of remainingPool) {
+    const extraEntries = Math.floor(participant.total_points / luckyDrawMinimumPoints)
+    const totalEntries = 1 + extraEntries
+    for (let i = 0; i < totalEntries; i++) {
+      weightedPool.push(participant)
+    }
+  }
+
+  const winner = chooseLuckyDrawWinner(weightedPool)
 
   if (!winner) {
     redirectAdminMessage('No eligible participants are available for a new draw.')

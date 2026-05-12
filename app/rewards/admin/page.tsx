@@ -249,7 +249,16 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
     task: takeFirst(submission.task),
   })) as PendingSubmissionRow[]
   const checkedInCount = checkedInResult.count ?? 0
-  const eligibleParticipants = (eligibleParticipantsResult.data ?? []) as EligibleParticipant[]
+  const rawEligibleParticipants = (eligibleParticipantsResult.data ?? []) as EligibleParticipant[]
+  const eligibleParticipants: EligibleParticipant[] = []
+  for (const p of rawEligibleParticipants) {
+    const extraEntries = Math.floor(p.total_points / luckyDrawMinimumPoints)
+    const totalEntries = 1 + extraEntries
+    for (let i = 0; i < totalEntries; i++) {
+      eligibleParticipants.push(p)
+    }
+  }
+
   const redeemableParticipants = (redeemableParticipantsResult.data ?? []) as EligibleParticipant[]
   const recentScans = ((recentScansResult.data ?? []) as Array<{
     id: string

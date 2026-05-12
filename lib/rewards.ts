@@ -107,12 +107,6 @@ export const rewardTaskBlueprints: RewardTaskBlueprint[] = [
 
 export const giftTiers = [
   {
-    name: 'Spark Tier',
-    pointsRequired: 150,
-    reward: 'MASA sticker pack or event pin',
-    note: 'First redemption tier. Subject to physical collection and stock availability.',
-  },
-  {
     name: 'Momentum Tier',
     pointsRequired: 300,
     reward: 'Sponsor voucher or premium merchandise',

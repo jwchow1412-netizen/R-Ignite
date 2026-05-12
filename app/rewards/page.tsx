@@ -29,6 +29,8 @@ type ProfileRow = {
   total_points: number
   is_checked_in: boolean
   role: string
+  daily_check_ins_count: number
+  last_check_in_date: string | null
 }
 
 type TaskRow = {
@@ -147,7 +149,7 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
         onConflict: 'id',
       }
     )
-    .select('id, email, full_name, total_points, is_checked_in, role')
+    .select('id, email, full_name, total_points, is_checked_in, role, daily_check_ins_count, last_check_in_date')
     .maybeSingle()
 
   if (!profileError && profileData) {
@@ -319,6 +321,8 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
       email={user.email ?? null}
       currentPoints={currentPoints}
       checkedIn={checkedIn}
+      dailyCheckInsCount={profile?.daily_check_ins_count ?? 0}
+      lastCheckInDate={profile?.last_check_in_date ?? null}
       eligibleForLuckyDraw={eligibleForLuckyDraw}
       nextTierName={nextTier?.name ?? null}
       remainingToNextTier={Math.max((nextTier?.pointsRequired ?? 0) - currentPoints, 0)}

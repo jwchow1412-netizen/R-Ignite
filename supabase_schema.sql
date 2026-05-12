@@ -12,6 +12,8 @@ create table if not exists public.profiles (
   total_points integer default 0 not null,
   is_checked_in boolean default false not null,
   role text default 'participant'::text not null,
+  daily_check_ins_count integer default 0 not null,
+  last_check_in_date timestamp with time zone,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -21,6 +23,8 @@ alter table public.profiles
   add column if not exists total_points integer default 0 not null,
   add column if not exists is_checked_in boolean default false not null,
   add column if not exists role text default 'participant'::text not null,
+  add column if not exists daily_check_ins_count integer default 0 not null,
+  add column if not exists last_check_in_date timestamp with time zone,
   add column if not exists updated_at timestamp with time zone default timezone('utc'::text, now()) not null;
 
 alter table public.profiles enable row level security;
