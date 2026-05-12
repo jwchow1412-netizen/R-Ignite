@@ -42,7 +42,7 @@ export default function RewardsQrScannerModal({ isOpen, onClose }: RewardsQrScan
       } else {
         setError('Invalid QR code. Please scan an official Organizer QR code.')
       }
-    } catch (err) {
+    } catch {
       setError('Unrecognized QR code format.')
     }
   }

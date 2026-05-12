@@ -5,17 +5,10 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  ArrowUpRight,
-  BadgeCheck,
   CheckCircle2,
-  Clock3,
   Gift,
   Lock,
-  QrCode,
-  ShieldCheck,
-  Sparkles,
   Trophy,
-  Users,
   ScanLine
 } from 'lucide-react'
 import { startTransition, useEffect, useState } from 'react'
@@ -166,29 +159,18 @@ function SubmitCheckInButton({ claimedToday }: { claimedToday: boolean }) {
 
 export default function RewardsPortalClient({
   userId,
-  displayName,
-  email,
   currentPoints,
-  checkedIn,
   dailyCheckInsCount,
   lastCheckInDate,
   eligibleForLuckyDraw,
-  nextTierName,
-  remainingToNextTier,
-  progressPercent,
   progressToLuckyDraw,
   proofSubmissionEnabled,
-  profileReady,
   isAdmin,
   message,
   setupMessage,
   initialTab,
-  luckyDrawDate,
   luckyDrawMinimumPoints,
-  luckyDrawRules,
   tasks,
-  tiers,
-  claimedTierNames,
   leaderboard,
   leaderboardReady,
   personalRank,
@@ -198,7 +180,6 @@ export default function RewardsPortalClient({
   const [activeTab, setActiveTab] = useState<RewardsTabId>(initialTab)
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
   const [isScannerOpen, setIsScannerOpen] = useState(false)
-  const [pointsDelta, setPointsDelta] = useState<number | null>(null)
 
   useEffect(() => {
     const storageKey = getStorageKey(userId)
@@ -211,14 +192,8 @@ export default function RewardsPortalClient({
     }
 
     if (currentPoints > previousPoints) {
-      setPointsDelta(currentPoints - previousPoints)
       window.localStorage.setItem(storageKey, String(currentPoints))
-
-      const timeoutId = window.setTimeout(() => {
-        setPointsDelta(null)
-      }, 2600)
-
-      return () => window.clearTimeout(timeoutId)
+      return
     }
 
     window.localStorage.setItem(storageKey, String(currentPoints))
