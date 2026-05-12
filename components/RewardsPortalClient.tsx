@@ -217,14 +217,14 @@ export default function RewardsPortalClient({
 
     const channel = supabase
       .channel(`rewards-portal-${userId}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, scheduleRefresh)
+      .on('postgres_changes' as any, { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, scheduleRefresh)
       .on(
-        'postgres_changes',
+        'postgres_changes' as any,
         { event: '*', schema: 'public', table: 'submissions', filter: `user_id=eq.${userId}` },
         scheduleRefresh
       )
       .on(
-        'postgres_changes',
+        'postgres_changes' as any,
         { event: '*', table: 'tier_redemptions', filter: `user_id=eq.${userId}` },
         scheduleRefresh
       )
@@ -241,7 +241,7 @@ export default function RewardsPortalClient({
 
   useEffect(() => {
     const supabase = createClient()
-    const channel = supabase.channel('public:tasks').on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => {
+    const channel = supabase.channel('public:tasks').on('postgres_changes' as any, { event: '*', schema: 'public', table: 'tasks' }, () => {
       router.refresh()
     }).subscribe()
 
