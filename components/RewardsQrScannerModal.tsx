@@ -102,7 +102,6 @@ export default function RewardsQrScannerModal({ isOpen, onClose }: RewardsQrScan
                     onScan={handleScan}
                     onError={handleError}
                     components={{
-                      audio: false,
                       finder: true,
                     }}
                     styles={{

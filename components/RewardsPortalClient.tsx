@@ -14,6 +14,8 @@ import {
 import { startTransition, useEffect, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 
+const POSTGRES_CHANGES = 'postgres_changes' as const
+
 import RewardsProofModal from '@/components/RewardsProofModal'
 import RewardsQrScannerModal from '@/components/RewardsQrScannerModal'
 import { Button } from '@/components/ui/button'
@@ -215,16 +217,20 @@ export default function RewardsPortalClient({
       }, 220)
     }
 
-    const channel = supabase
-      .channel(`rewards-portal-${userId}`)
-      .on('postgres_changes' as any, { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, scheduleRefresh)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const channel = (supabase.channel(`rewards-portal-${userId}`) as any)
       .on(
-        'postgres_changes' as any,
+        POSTGRES_CHANGES,
+        { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` },
+        scheduleRefresh
+      )
+      .on(
+        POSTGRES_CHANGES,
         { event: '*', schema: 'public', table: 'submissions', filter: `user_id=eq.${userId}` },
         scheduleRefresh
       )
       .on(
-        'postgres_changes' as any,
+        POSTGRES_CHANGES,
         { event: '*', table: 'tier_redemptions', filter: `user_id=eq.${userId}` },
         scheduleRefresh
       )
@@ -241,9 +247,12 @@ export default function RewardsPortalClient({
 
   useEffect(() => {
     const supabase = createClient()
-    const channel = supabase.channel('public:tasks').on('postgres_changes' as any, { event: '*', schema: 'public', table: 'tasks' }, () => {
-      router.refresh()
-    }).subscribe()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const channel = (supabase.channel('public:tasks') as any)
+      .on(POSTGRES_CHANGES, { event: '*', schema: 'public', table: 'tasks' }, () => {
+        router.refresh()
+      })
+      .subscribe()
 
     return () => {
       void supabase.removeChannel(channel)
