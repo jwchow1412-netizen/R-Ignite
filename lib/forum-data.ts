@@ -36,24 +36,6 @@ export const forumAnnouncements = {
       isMap: true,
       secondaryLinkText: "Find Parking",
       secondaryEmbedLink: "https://drive.google.com/drive/folders/1TLJca2FYSmI4OtWoRxu07XbDkoH3S-cX?usp=sharing"
-    },
-    {
-      id: "ann-4",
-      title: "Schedule Reminder",
-      icon: "📅",
-      snippet: "Registration starts promptly at 12:00 PM. The Fireside conversation follows the opening ceremony. Check out the full breakdown.",
-      linkText: "View Schedule",
-      embedLink: "/timeline",
-      isMap: false
-    },
-    {
-      id: "ann-5",
-      title: "Preparation Guide",
-      icon: "💻",
-      snippet: "Download the necessary software and dependencies for the Modelling Case Study (14:10). Don't forget your chargers!",
-      linkText: "Download Material",
-      embedLink: "https://discord.gg/49nQjN38zS",
-      isMap: false
     }
   ]
 };
