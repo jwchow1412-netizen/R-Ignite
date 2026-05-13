@@ -48,11 +48,11 @@ export default function PopupAd() {
                             </svg>
                         </button>
                         
-                        <Link href="/forum" onClick={() => setIsVisible(false)} className="block w-full h-full relative">
+                        <Link href="/rewards" onClick={() => setIsVisible(false)} className="block w-full h-full relative">
                             {/* Base Image (starts vibrant, darkens on hover) */}
                             <Image 
-                                src="/Forum/poster-new.png" 
-                                alt="Workshop Poster" 
+                                src="/lucky-draw-banner.png" 
+                                alt="Rewards Portal - Earn Entry Tickets" 
                                 fill 
                                 className="object-cover transition-all duration-700 ease-in-out group-hover:opacity-60 group-hover:mix-blend-luminosity" 
                                 priority
@@ -66,9 +66,9 @@ export default function PopupAd() {
                             </div>
 
                             <div className="absolute bottom-0 left-0 p-6 md:p-10 w-full md:w-3/4 opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-8 group-hover:translate-y-0 pointer-events-none">
-                                <h2 className="text-2xl md:text-5xl font-black text-white mb-3 leading-tight uppercase tracking-wide border-l-4 border-[#F89924] pl-4">The Workshop is Nearing! 🚀</h2>
+                                <h2 className="text-2xl md:text-5xl font-black text-white mb-3 leading-tight uppercase tracking-wide border-l-4 border-[#F89924] pl-4">Earn Lucky Draw Entries! 🎯</h2>
                                 <p className="text-[rgba(248,244,246,0.85)] max-w-xl font-mono text-xs md:text-sm leading-relaxed bg-black/60 p-4 border border-white/10 backdrop-blur-sm shadow-xl inline-block">
-                                    Click here to access full venue intel and prep resources.
+                                    Complete tasks, earn points, and spin the wheel. Every 200 points = 1 extra entry! Base entry guaranteed at Grand Final. 🎪
                                 </p>
                             </div>
                         </Link>

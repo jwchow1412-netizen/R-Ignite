@@ -3,13 +3,31 @@
 export const forumAnnouncements = {
   hero: {
     id: "hero-1",
-    title: "The Workshop is Nearing! 🚀",
-    subtitle: "Get ready for a day of intensive learning, networking, and expert insights. Date: 25th April 2026. Make sure you have your laptops prepopulated with our RScript starter packs.",
-    imageUrl: "/Forum/poster-new.png"
+    title: "Win Big at R-Ignite's Lucky Draw! 🎡",
+    subtitle: "Earn entries by scoring points in our Rewards Portal. Complete tasks, login with Discord, scan QR codes, and collect badges. Every 200 points = 1 extra entry. Attend Grand Final = guaranteed base entry. Visit the portal now to get started!",
+    imageUrl: "/lucky-draw-banner.png"
   },
   items: [
     {
       id: "ann-1",
+      title: "Lucky Draw Entry Mechanism",
+      icon: "🎪",
+      snippet: "🎫 Base Entry (+1): Attending Grand Final registration booth. 🎯 Extra Entry (+2): Login with Discord + Scan QR at GF + Earn 200+ points. 🎁 Maximum (+3): Complete ALL requirements. Combine portal participants with registration records before spinning!",
+      linkText: "Understand the Mechanism",
+      embedLink: "/rewards",
+      isMap: false
+    },
+    {
+      id: "ann-2",
+      title: "Rewards Portal Guide",
+      icon: "⭐",
+      snippet: "Complete daily check-ins, submit tasks, and earn points. Track your progress towards 200 points for the lucky draw. Claim rewards and compete on the leaderboard. Every point brings you closer to spinning the wheel!",
+      linkText: "Go to Rewards Portal",
+      embedLink: "/rewards",
+      isMap: false
+    },
+    {
+      id: "ann-3",
       title: "Venue & Parking Details",
       icon: "📍",
       snippet: "Join us at the UCSI KL Campus. Directions, parking maps, and transit details are all available now. Please arrive early for registration.",
@@ -20,7 +38,7 @@ export const forumAnnouncements = {
       secondaryEmbedLink: "https://drive.google.com/drive/folders/1TLJca2FYSmI4OtWoRxu07XbDkoH3S-cX?usp=sharing"
     },
     {
-      id: "ann-2",
+      id: "ann-4",
       title: "Schedule Reminder",
       icon: "📅",
       snippet: "Registration starts promptly at 12:00 PM. The Fireside conversation follows the opening ceremony. Check out the full breakdown.",
@@ -29,7 +47,7 @@ export const forumAnnouncements = {
       isMap: false
     },
     {
-      id: "ann-3",
+      id: "ann-5",
       title: "Preparation Guide",
       icon: "💻",
       snippet: "Download the necessary software and dependencies for the Modelling Case Study (14:10). Don't forget your chargers!",

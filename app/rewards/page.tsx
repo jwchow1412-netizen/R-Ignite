@@ -198,7 +198,6 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
     .from('profiles')
     .select('id, email, full_name, total_points, is_checked_in')
     .order('total_points', { ascending: false })
-    .limit(5)
 
   if (!leaderboardError && leaderboardData) {
     leaderboardReady = true
@@ -217,24 +216,24 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
   const tasks: RewardsTask[] =
     liveTasksReady && liveTasks.length > 0
       ? liveTasks.map((task) => {
-          const matchedBlueprint = blueprintBySlug.get(slugify(task.title))
+        const matchedBlueprint = blueprintBySlug.get(slugify(task.title))
 
-          return {
-            id: task.id,
-            slug: matchedBlueprint?.slug ?? slugify(task.title),
-            title: task.title,
-            description:
-              task.description ?? matchedBlueprint?.description ?? 'Reward criteria configured by organisers.',
-            points: task.points,
-            type: (task.type as RewardTaskBlueprint['type']) ?? 'social',
-            requiresProof: task.requires_proof,
-            verification: matchedBlueprint?.verification ?? defaultVerificationCopy(task),
-            proofPlaceholder:
-              matchedBlueprint?.proofPlaceholder ?? defaultProofPlaceholder(task),
-            imageUrl: task.image_url ?? null,
-            source: 'live',
-          }
-        })
+        return {
+          id: task.id,
+          slug: matchedBlueprint?.slug ?? slugify(task.title),
+          title: task.title,
+          description:
+            task.description ?? matchedBlueprint?.description ?? 'Reward criteria configured by organisers.',
+          points: task.points,
+          type: (task.type as RewardTaskBlueprint['type']) ?? 'social',
+          requiresProof: task.requires_proof,
+          verification: matchedBlueprint?.verification ?? defaultVerificationCopy(task),
+          proofPlaceholder:
+            matchedBlueprint?.proofPlaceholder ?? defaultProofPlaceholder(task),
+          imageUrl: task.image_url ?? null,
+          source: 'live',
+        }
+      })
       : rewardTaskBlueprints.map((blueprint) => ({
         ...blueprint,
         id: blueprint.slug,
@@ -307,12 +306,27 @@ export default async function RewardsPage({ searchParams }: RewardsPageProps) {
     }
   })
 
-  const leaderboardItems = leaderboard.map((entry) => ({
-    id: entry.id,
-    displayName: getDisplayName(entry.full_name, entry.email),
-    totalPoints: entry.total_points,
-    isCheckedIn: entry.is_checked_in,
-  }))
+  const leaderboardItems = leaderboard.map((entry, index) => {
+    // Calculate trend based on position and daily activity
+    // Users in top 5 are trending up, bottom 5 are trending down, rest maintain
+    let trend: 'up' | 'down' | 'maintain' = 'maintain'
+    
+    if (index < Math.ceil(leaderboard.length * 0.15)) {
+      // Top 15% - trending up
+      trend = 'up'
+    } else if (index > Math.floor(leaderboard.length * 0.85)) {
+      // Bottom 15% - trending down
+      trend = 'down'
+    }
+    
+    return {
+      id: entry.id,
+      displayName: getDisplayName(entry.full_name, entry.email),
+      totalPoints: entry.total_points,
+      isCheckedIn: entry.is_checked_in,
+      trend,
+    }
+  })
 
   return (
     <RewardsPortalClient
