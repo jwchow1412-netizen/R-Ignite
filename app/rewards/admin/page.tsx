@@ -38,6 +38,7 @@ import {
 } from '../actions'
 import PortalStatusToggleClient from '@/components/PortalStatusToggleClient'
 import TaskManagementClient from '@/components/TaskManagementClient'
+import DailyCheckInPointsEditor from '@/components/DailyCheckInPointsEditor'
 
 export const metadata = {
   title: 'Rewards Admin | MASA Hackathon 2026: R-Ignite',
@@ -133,6 +134,7 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
     recentRedemptionsResult,
     tasksResult,
     siteSettingsResult,
+    dailyCheckInPointsResult,
   ] = await Promise.all([
     supabase
       .from('submissions')
@@ -189,6 +191,11 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
       .from('site_settings')
       .select('value')
       .eq('key', 'rewards_portal_status')
+      .maybeSingle(),
+    supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'daily_check_in_points')
       .maybeSingle(),
   ])
 
@@ -327,6 +334,7 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
     image_url: string | null
   }>
   const isPortalOpen = siteSettingsResult.data?.value?.is_open ?? true
+  const dailyCheckInPoints = parseInt(dailyCheckInPointsResult.data?.value ?? '50', 10)
 
 
   let claimedTierRows: Array<{ user_id: string; tier_name: string }> = []
@@ -455,6 +463,10 @@ export default async function RewardsAdminPage({ searchParams }: AdminPageProps)
 
         <section className="mt-10">
           <PortalStatusToggleClient isPortalOpen={isPortalOpen} />
+        </section>
+
+        <section className="mt-10">
+          <DailyCheckInPointsEditor currentPoints={dailyCheckInPoints} />
         </section>
 
         <section className="mt-10 grid gap-6 xl:grid-cols-[1.25fr,0.75fr]">

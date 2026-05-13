@@ -9,6 +9,7 @@ import { User } from "@supabase/supabase-js";
 
 const mainLinks = [
   { name: "Home", href: "/" },
+  { name: "Rewards", href: "/rewards" },
   { name: "About", href: "/about" },
   { name: "Track", href: "/track" },
   { name: "Timeline", href: "/timeline" },

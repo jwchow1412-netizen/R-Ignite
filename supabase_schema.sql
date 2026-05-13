@@ -393,6 +393,7 @@ create table if not exists public.site_settings (
 );
 
 insert into public.site_settings (key, value) values ('rewards_portal_status', '{"is_open": true}') on conflict (key) do nothing;
+insert into public.site_settings (key, value) values ('daily_check_in_points', '50') on conflict (key) do nothing;
 
 alter table public.site_settings enable row level security;
 

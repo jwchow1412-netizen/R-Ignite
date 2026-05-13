@@ -147,6 +147,22 @@ export async function requireAdminRewardsUser(nextPath = '/rewards/admin') {
   return { supabase, user, profile }
 }
 
+export async function getDailyCheckInPoints(): Promise<number> {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'daily_check_in_points')
+    .maybeSingle()
+
+  if (error || !data) {
+    return 50 // default
+  }
+
+  const points = parseInt(data.value, 10)
+  return isNaN(points) ? 50 : points
+}
+
 export function hasRewardsQrSecret() {
   return Boolean(process.env.REWARDS_QR_SECRET)
 }

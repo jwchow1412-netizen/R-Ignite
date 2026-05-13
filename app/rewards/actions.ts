@@ -320,11 +320,26 @@ export async function recordManualAttendance(formData: FormData) {
 
   const safeParticipant = participant
 
+  let pointsToAward = safeCheckpoint.points;
+  const taskTitle = safeCheckpoint.slug === 'grand-final-entry' 
+    ? 'Grand final event check-in' 
+    : 'Attend an in-person workshop';
+
+  const { data: taskData } = await supabase
+    .from('tasks')
+    .select('points')
+    .eq('title', taskTitle)
+    .maybeSingle();
+
+  if (taskData) {
+    pointsToAward = taskData.points;
+  }
+
   const { error } = await supabase.from('attendance_scans').insert({
     user_id: safeParticipant.id,
     checkpoint_slug: safeCheckpoint.slug,
     checkpoint_name: safeCheckpoint.title,
-    points_awarded: safeCheckpoint.points,
+    points_awarded: pointsToAward,
     sets_checked_in: safeCheckpoint.setsCheckedIn,
     created_by: user.id,
   })
@@ -373,11 +388,26 @@ export async function completeRewardsCheckIn(formData: FormData) {
     redirect(getCheckInRedirectPath(checkpoint.slug, token, 'Apply the latest rewards schema first.'))
   }
 
+  let pointsToAward = checkpoint.points;
+  const taskTitle = checkpoint.slug === 'grand-final-entry' 
+    ? 'Grand final event check-in' 
+    : 'Attend an in-person workshop';
+
+  const { data: taskData } = await supabase
+    .from('tasks')
+    .select('points')
+    .eq('title', taskTitle)
+    .maybeSingle();
+
+  if (taskData) {
+    pointsToAward = taskData.points;
+  }
+
   const { error } = await supabase.from('attendance_scans').insert({
     user_id: user.id,
     checkpoint_slug: checkpoint.slug,
     checkpoint_name: checkpoint.title,
-    points_awarded: checkpoint.points,
+    points_awarded: pointsToAward,
     sets_checked_in: checkpoint.setsCheckedIn,
   })
 
@@ -603,4 +633,20 @@ export async function toggleRewardsPortalStatus(isOpen: boolean) {
   revalidatePath('/rewards')
   revalidatePath('/rewards/admin')
   redirectAdminMessage(`Rewards Portal is now ${isOpen ? 'OPEN' : 'LOCKED'}.`)
+}
+
+export async function updateDailyCheckInPoints(points: number) {
+  const { supabase } = await requireAdminRewardsUser('/rewards/admin')
+
+  const { error } = await supabase
+    .from('site_settings')
+    .upsert({ key: 'daily_check_in_points', value: points.toString(), updated_at: new Date().toISOString() })
+
+  if (error) {
+    redirectAdminMessage('Could not update daily check-in points.')
+  }
+
+  revalidatePath('/rewards')
+  revalidatePath('/rewards/admin')
+  redirectAdminMessage(`Daily check-in points updated to ${points}.`)
 }
