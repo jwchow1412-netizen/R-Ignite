@@ -321,14 +321,16 @@ export async function recordManualAttendance(formData: FormData) {
   const safeParticipant = participant
 
   let pointsToAward = safeCheckpoint.points;
-  const taskTitle = safeCheckpoint.slug === 'grand-final-entry' 
-    ? 'Grand final event check-in' 
-    : 'Attend an in-person workshop';
+  const taskTitleVariants = safeCheckpoint.slug === 'grand-final-entry' 
+    ? ['Grand final event check-in', 'Scan QR for grand final lucky draw'] 
+    : ['Attend an in-person workshop'];
 
   const { data: taskData } = await supabase
     .from('tasks')
     .select('points')
-    .eq('title', taskTitle)
+    .in('title', taskTitleVariants)
+    .order('created_at', { ascending: false })
+    .limit(1)
     .maybeSingle();
 
   if (taskData) {
@@ -389,14 +391,16 @@ export async function completeRewardsCheckIn(formData: FormData) {
   }
 
   let pointsToAward = checkpoint.points;
-  const taskTitle = checkpoint.slug === 'grand-final-entry' 
-    ? 'Grand final event check-in' 
-    : 'Attend an in-person workshop';
+  const taskTitleVariants = checkpoint.slug === 'grand-final-entry' 
+    ? ['Grand final event check-in', 'Scan QR for grand final lucky draw'] 
+    : ['Attend an in-person workshop'];
 
   const { data: taskData } = await supabase
     .from('tasks')
     .select('points')
-    .eq('title', taskTitle)
+    .in('title', taskTitleVariants)
+    .order('created_at', { ascending: false })
+    .limit(1)
     .maybeSingle();
 
   if (taskData) {
