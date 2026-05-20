@@ -9,10 +9,7 @@ import {
   Gift,
   Lock,
   Trophy,
-  ScanLine,
-  TrendingUp,
-  TrendingDown,
-  Minus
+  ScanLine
 } from 'lucide-react'
 import { startTransition, useEffect, useState } from 'react'
 import { useFormStatus } from 'react-dom'
@@ -49,7 +46,6 @@ type RewardsPortalLeaderboardItem = {
   displayName: string
   totalPoints: number
   isCheckedIn: boolean
-  trend?: 'up' | 'down' | 'maintain'
 }
 
 type RewardsPortalTierItem = {
@@ -683,13 +679,8 @@ export default function RewardsPortalClient({
                               </span>
                             </div>
                           </div>
-                          <div className="text-right flex flex-col items-end justify-center">
+                          <div className="text-right">
                             <p className="text-base font-black text-[#ff8ba7] glow-text">{entry.totalPoints}</p>
-                            <div className="mt-1 flex items-center justify-end">
-                              {entry.trend === 'up' && <TrendingUp className="h-4 w-4 text-emerald-400" />}
-                              {entry.trend === 'down' && <TrendingDown className="h-4 w-4 text-rose-400" />}
-                              {(!entry.trend || entry.trend === 'maintain') && <Minus className="h-4 w-4 text-slate-400" />}
-                            </div>
                           </div>
                         </div>
                       ))}

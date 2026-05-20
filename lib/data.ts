@@ -255,10 +255,10 @@ export const panelists = [
     bio: "Daniel is a qualified actuary based in the Milliman KL office with 5 years’ experience. He specialises in life insurance and family takaful, and has contributed to consulting projects across Southeast Asia.\n\nHe has worked on Climate Risk Stress Testing (CRST) exercises for several insurers and takaful operators. His project experiences include regulatory reviews covering valuation processes, management of participating business (MPB), Prophet modelling, and various ICAAP-related reviews. He also is experienced in M&A and embedded value review work.",
   },
   {
-    name: "Wong Zhao Loon",
+    name: "Wang Zhao Loon",
     role: "Manager, Enterprise Risk Management, MSIG Insurance (Malaysia) Bhd",
     title: "",
-    image: "/Panelists/Wong Zhao Loon.jpg",
+    image: "/Panelists/Wang Zhao Loon.jpg",
     linkedin: "https://www.linkedin.com/in/zhao-loon-wang-29611263/",
     bio: "Zhao Loon is a risk management professional with approximately seven years of experience across various risk domains, with a primary focus on financial and sustainability risk management.\n\nHe currently serves as the Manager of Enterprise Risk Management (ERM) at MSIG Insurance (Malaysia) Bhd, where he plays a key role in supporting the company’s climate risk management initiatives, including strategy development, cross-functional integration, risk appetite review, metric design, disclosures, and stress testing. He is a member of the Actuarial Society Malaysia (ASM)’s Climate Risk Working Group and holds a BSc (Hons) in Actuarial Science from UCSI University Malaysia, along with a certification in Sustainability and Climate Risk (SCR) from the Global Association of Risk Professionals (GARP).",
   }

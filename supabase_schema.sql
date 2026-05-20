@@ -205,7 +205,7 @@ begin
 
   return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql security definer set search_path = public;
 
 drop trigger if exists on_submission_status_change on public.submissions;
 create trigger on_submission_status_change
@@ -266,7 +266,7 @@ begin
 
   return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql security definer set search_path = public;
 
 drop trigger if exists on_attendance_scan_created on public.attendance_scans;
 create trigger on_attendance_scan_created
