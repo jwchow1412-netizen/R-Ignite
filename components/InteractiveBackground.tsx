@@ -46,20 +46,20 @@ export const InteractiveBackground = () => {
                 className="absolute inset-[-50%] w-[200%] h-[200%] origin-center"
             >
                 <div
-                    className="w-full h-full opacity-20"
+                    className="w-full h-full opacity-50"
                     style={{
                         backgroundImage: `
-              linear-gradient(to right, rgba(212, 100, 118, 0.3) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(212, 100, 118, 0.3) 1px, transparent 1px)
+              linear-gradient(to right, rgba(212, 100, 118, 0.6) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(212, 100, 118, 0.6) 1px, transparent 1px)
             `,
                         backgroundSize: "60px 60px",
-                        maskImage: "radial-gradient(circle at center, black, transparent 70%)"
+                        maskImage: "radial-gradient(circle at center, black, transparent 85%)"
                     }}
                 />
             </motion.div>
 
             {/* Floating Spark Particles */}
-            {Array.from({ length: 20 }).map((_, i) => (
+            {Array.from({ length: 40 }).map((_, i) => (
                 <SparkParticle key={i} />
             ))}
 
