@@ -10,6 +10,9 @@ import JudgingRubric from "@/components/JudgingRubric";
 import FAQLanding from "@/components/FAQLanding";
 import SponsorScroll from "@/components/SponsorScroll";
 import PrizePool from "@/components/PrizePool";
+import WinnerCarousel from "@/components/WinnerCarousel";
+import EventImpact from "@/components/EventImpact";
+import VideoRecap from "@/components/VideoRecap";
 import { InteractiveBackground } from './InteractiveBackground';
 import { whyJoin } from "@/lib/data";
 import { scaleUp, fadeIn, slideUp, staggerContainer } from "@/lib/animations";
@@ -206,6 +209,35 @@ export default function LandingPage() {
                                 </div>
                             </div>
                         </div>
+                    </motion.div>
+                </div>
+            </motion.section>
+
+            {/* Event Highlights & Impact Section */}
+            <motion.section
+                className="relative mx-auto max-w-6xl px-4 pb-20 md:px-6"
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: true, margin: "-100px" }}
+                variants={staggerContainer}
+            >
+                {/* Background glow for the whole section */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[120%] bg-[#D46476]/5 blur-[150px] pointer-events-none rounded-[100%]" />
+
+                <div className="flex flex-col gap-20 relative z-10">
+                    {/* Row 1: Carousel */}
+                    <motion.div variants={fadeIn} className="w-full">
+                        <WinnerCarousel />
+                    </motion.div>
+                    
+                    {/* Row 2: Impact Dashboard */}
+                    <motion.div variants={fadeIn} className="w-full">
+                        <EventImpact />
+                    </motion.div>
+
+                    {/* Row 3: Video Recaps */}
+                    <motion.div variants={fadeIn} className="w-full">
+                        <VideoRecap />
                     </motion.div>
                 </div>
             </motion.section>

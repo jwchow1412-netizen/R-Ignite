@@ -263,3 +263,47 @@ export const panelists = [
     bio: "Zhao Loon is a risk management professional with approximately seven years of experience across various risk domains, with a primary focus on financial and sustainability risk management.\n\nHe currently serves as the Manager of Enterprise Risk Management (ERM) at MSIG Insurance (Malaysia) Bhd, where he plays a key role in supporting the company’s climate risk management initiatives, including strategy development, cross-functional integration, risk appetite review, metric design, disclosures, and stress testing. He is a member of the Actuarial Society Malaysia (ASM)’s Climate Risk Working Group and holds a BSc (Hons) in Actuarial Science from UCSI University Malaysia, along with a certification in Sustainability and Climate Risk (SCR) from the Global Association of Risk Professionals (GARP).",
   }
 ];
+
+export const pastWinners = [
+  {
+    title: "Champion",
+    teamName: "Team Onzlah",
+    image: "/winners/Onzlah.jpeg"
+  },
+  {
+    title: "1st Runner-Up",
+    teamName: "Team Strawberry Sundae",
+    image: "/winners/StrawberrySundae.jpeg"
+  },
+  {
+    title: "2nd Runner-Up",
+    teamName: "Team momo",
+    image: "/winners/Momo.jpeg"
+  },
+  {
+    title: "Event Highlights",
+    teamName: "Networking & Judging",
+    image: "/winners/collage-1.jpeg"
+  },
+  {
+    title: "Event Highlights",
+    teamName: "Opening & Finalist Presentation",
+    image: "/winners/collage-2.jpeg"
+  },
+  {
+    title: "Event Highlights",
+    teamName: "Panel Session & Closing",
+    image: "/winners/collage-3.jpeg"
+  }
+];
+
+export const impactMetrics2026 = [
+  { label: "Participants", value: 258 },
+  { label: "Universities", value: 22 },
+  { label: "Teams Submitted", value: 52 },
+  { label: "Website Views", value: 9366, suffix: "+" },
+  { label: "Active Users", value: 1740, suffix: "+" },
+  { label: "Instagram Views", value: 333900, suffix: "+" },
+  { label: "IG Interactions", value: 3500, suffix: "+" }
+];
+
